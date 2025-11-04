@@ -7,14 +7,14 @@
 Consider the simple periodic function:
 $$y_i(A_i,\omega_i;t)=A_i \sin\left(\omega_i t \right)$$
 
-where $A$ represents the amplitude,$\omega$ the frequency, and $t$ is the time variable.
+where _A_ represents the amplitude, _ω_ the frequency, and _t_ is the time variable.
 
-Restrict the time variable to the interval $t\left[0,2\pi\right]$.
+Restrict the time variable to the interval t ∈ [0,2\π].
 
-To create the dataset, produce $N$ discrete representations of $y_i$, i.e., N-number of 1D vectors, called $V_i(A_i,\omega_i)$, by creating a grid of reasonable combinations of $A$ and $\omega$. Assume that it is sampled with 100 points, meaning each 1D vector consists of 100 points. Initially, N can be on the order of $10^3$ and then progressively increase to test the model’s accuracy against this choice.
+To create the dataset, produce _N_ discrete representations of $y_i$, i.e., N-number of 1D vectors, called $V_i(A_i,\omega_i)$, by creating a grid of reasonable combinations of _A_ and _ω_. Assume that it is sampled with 100 points, meaning each 1D vector consists of 100 points. Initially, N can be on the order of 10³ and then progressively increase to test the model’s accuracy against this choice.
 
 Inference:
-Using the dataset, start with an encoder-only transformer model (e.g., a Bert-like model) and train it to predict $\left(A,\omega\right)$ from a given $V_i$. In this case, the vector $V_i$ is the input, and the output (or “labels”) will be the pairs$\left(A_i,\omega \right)$, \to $Vi\left(A_i,\omega_i \right)$.
+Using the dataset, start with an encoder-only transformer model (e.g., a Bert-like model) and train it to predict $\left(A,\omega\right)$ from a given $V_i$. In this case, the vector $V_i$ is the input, and the output (or “labels”) will be the pairs$\left(A_i,\omega \right)$, to $Vi\left(A_i,\omega_i \right)$.
 
 Questions to consider:
 - How does the model perform?
