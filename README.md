@@ -2,11 +2,29 @@
 
 
 
-## Getting started
+## Semestral project
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Consider the simple periodic function:
+$$y_i(A_i,\omega_i;t)=A_i \sin\left(\omega_i t \right)$$
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+where $A$ represents the amplitude,$\omega$ the frequency, and $t$ is the time variable.
+
+Restrict the time variable to the interval $t\left[0,2\pi\right]$.
+
+To create the dataset, produce $N$ discrete representations of $y_i$, i.e., N-number of 1D vectors, called $V_i(A_i,\omega_i)$, by creating a grid of reasonable combinations of $A$ and $\omega$. Assume that it is sampled with 100 points, meaning each 1D vector consists of 100 points. Initially, N can be on the order of $10^3$ and then progressively increase to test the model’s accuracy against this choice.
+
+Inference:
+Using the dataset, start with an encoder-only transformer model (e.g., a Bert-like model) and train it to predict $\left(A,\omega\right)$ from a given $V_i$. In this case, the vector $V_i$ is the input, and the output (or “labels”) will be the pairs$\left(A_i,\omega \right)$, \to $Vi\left(A_i,\omega_i \right)$.
+
+Questions to consider:
+- How does the model perform?
+- How does the performance/accuracy vary by changing the dataset size N, or by adjusting the transformer model’s hyperparameters?
+- What if a different transformer architecture is used, such as a decoder-only or encoder-decoder model?
+- If the training set is restricted to a single parameter (e.g., fixing the amplitude A = 1 and varying only , does this improve inference accuracy?
+
+
+
+
 
 ## Add your files
 
@@ -20,27 +38,6 @@ git branch -M main
 git push -uf origin main
 ```
 
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.fit.cvut.cz/klemaada/mvi-sp/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
 ***
 
