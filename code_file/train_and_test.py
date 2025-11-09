@@ -86,7 +86,7 @@ def train_and_eval_training(train_loader, val_loader, device, model, criterion, 
             best_val = val_mse
             best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
 
-        if epoch % 20 == 0:
+        if epoch % 10 == 0:
             tr_mse, tr_mae = evaluate(train_loader, model, device)
             print(f"Epoch {epoch:3d}; Train MSE {tr_mse:.6f}, MAE {tr_mae:.6f}; Val MSE {val_mse:.6f}, MAE {val_mae:.6f}")
 
