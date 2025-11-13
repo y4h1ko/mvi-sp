@@ -11,10 +11,10 @@ OMEGA_MAX = 10              #maximal value for frequency (omega)
 AMPLITUDE_MIN = 1           #minimal value for amplitude (A)
 AMPLITUDE_MAX = 1           #maximal value for amplitude (A)
 
-EPOCHS = 200 
+EPOCHS = 160 
 
 
-PLOTS_DIR = Path("plots/rep02-diff-w-and-discretization")
+PLOTS_DIR = Path("plots/rep03-diff-N-and-t_disc-and-EPOCHS")
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
 

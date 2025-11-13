@@ -4,7 +4,7 @@ from .imports_and_libraries import *
 
 def set_device():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(device.type) 
+    #print(device.type) 
     return device
 
 @torch.no_grad()
@@ -53,14 +53,15 @@ def split_and_load(dataset):
 
     return train_loader, val_loader, test_loader
 
-def train_and_eval_training(train_loader, val_loader, device, model, criterion, optimizer, scheduler):
+def train_and_eval_training(train_loader, val_loader, device, model, criterion, optimizer, scheduler, 
+                            print_update: bool=False, max_epochs: int=EPOCHS):
     #real loop and training and everything....
     best_val = float("inf")
     best_state = None
 
     train_mse_hist, val_mse_hist = [], []
 
-    for epoch in range(1, EPOCHS + 1):
+    for epoch in range(1, max_epochs + 1):
         model.train()
         
         #training step
@@ -86,9 +87,10 @@ def train_and_eval_training(train_loader, val_loader, device, model, criterion, 
             best_val = val_mse
             best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
 
-        if epoch % 10 == 0:
-            tr_mse, tr_mae = evaluate(train_loader, model, device)
-            print(f"Epoch {epoch:3d}; Train MSE {tr_mse:.6f}, MAE {tr_mae:.6f}; Val MSE {val_mse:.6f}, MAE {val_mae:.6f}")
+        if print_update:
+            if epoch % 10 == 0:
+                tr_mse, tr_mae = evaluate(train_loader, model, device)
+                print(f"Epoch {epoch:3d}; Train MSE {tr_mse:.6f}, MAE {tr_mae:.6f}; Val MSE {val_mse:.6f}, MAE {val_mae:.6f}")
 
     #load the best weights
     model.load_state_dict(best_state)

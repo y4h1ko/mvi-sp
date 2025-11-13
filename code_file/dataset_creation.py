@@ -15,7 +15,7 @@ def set_seed(seed=SEED, seed_torch=True):
         torch.backends.cudnn.deterministic = True
 
     #for now i print seed
-    print(f'Seed: {seed}')
+    #print(f'Seed: {seed}')
 
 def from_array_to_tensor_dataset(V_np_arr: np.ndarray, tar_np_arr: np.ndarray):
     #np.arrays to tensors
