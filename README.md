@@ -28,6 +28,11 @@ Questions to consider:
 
 ## Add your files
 
+This repo has two remote repositories and should be completely identical, after commit run this:
+git push origin main   #for pushing to GitLab
+git push github main   #for pushing to GitHub
+
+
 - [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
 - [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
 
