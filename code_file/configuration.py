@@ -14,7 +14,8 @@ AMPLITUDE_MAX = 1           #maximal value for amplitude (A)
 EPOCHS = 160 
 
 
-PLOTS_DIR = Path("plots/rep03-diff-N-and-t_disc-and-EPOCHS")
+PLOTS_DIR = Path("plots/rep04-different-model-hyperparameters")
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
+CSV_PATH = PLOTS_DIR / "T1_hyperprams.csv"
 

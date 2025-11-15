@@ -1,0 +1,257 @@
+Summary (d_model, nhead, num_layers, dim_f -> best_epoch, best_val, test_mse, test_mae)
+d_model= 32, nhead= 1, layers= 1, dim_f=  64 -> best_epoch=131, best_val=0.001186, test_mse=0.000997, test_mae=0.023556
+d_model= 32, nhead= 1, layers= 1, dim_f= 128 -> best_epoch=107, best_val=0.002528, test_mse=0.003117, test_mae=0.041304
+d_model= 32, nhead= 1, layers= 1, dim_f= 256 -> best_epoch=146, best_val=0.001599, test_mse=0.001574, test_mae=0.030713
+d_model= 32, nhead= 1, layers= 1, dim_f= 512 -> best_epoch=122, best_val=0.001409, test_mse=0.001378, test_mae=0.027577
+d_model= 32, nhead= 1, layers= 2, dim_f=  64 -> best_epoch=118, best_val=0.001378, test_mse=0.001436, test_mae=0.029449
+d_model= 32, nhead= 1, layers= 2, dim_f= 128 -> best_epoch=105, best_val=0.001456, test_mse=0.001448, test_mae=0.028214
+d_model= 32, nhead= 1, layers= 2, dim_f= 256 -> best_epoch= 80, best_val=0.001914, test_mse=0.002515, test_mae=0.034705
+d_model= 32, nhead= 1, layers= 2, dim_f= 512 -> best_epoch= 87, best_val=0.004771, test_mse=0.004385, test_mae=0.055126
+d_model= 32, nhead= 1, layers= 3, dim_f=  64 -> best_epoch=117, best_val=0.002092, test_mse=0.002470, test_mae=0.030949
+d_model= 32, nhead= 1, layers= 3, dim_f= 128 -> best_epoch=114, best_val=0.001652, test_mse=0.001599, test_mae=0.029222
+d_model= 32, nhead= 1, layers= 3, dim_f= 256 -> best_epoch= 95, best_val=0.002301, test_mse=0.002206, test_mae=0.037978
+d_model= 32, nhead= 1, layers= 3, dim_f= 512 -> best_epoch= 30, best_val=2.311430, test_mse=2.236176, test_mae=1.290160
+d_model= 32, nhead= 1, layers= 4, dim_f=  64 -> best_epoch=124, best_val=0.000394, test_mse=0.000477, test_mae=0.016413
+d_model= 32, nhead= 1, layers= 4, dim_f= 128 -> best_epoch= 23, best_val=2.005307, test_mse=2.793736, test_mae=1.421928
+d_model= 32, nhead= 1, layers= 4, dim_f= 256 -> best_epoch=133, best_val=0.011691, test_mse=0.014718, test_mae=0.092844
+d_model= 32, nhead= 1, layers= 4, dim_f= 512 -> best_epoch=157, best_val=0.582249, test_mse=0.543557, test_mae=0.486086
+d_model= 32, nhead= 2, layers= 1, dim_f=  64 -> best_epoch=121, best_val=0.000871, test_mse=0.000815, test_mae=0.020284
+d_model= 32, nhead= 2, layers= 1, dim_f= 128 -> best_epoch= 91, best_val=0.003285, test_mse=0.003714, test_mae=0.047814
+d_model= 32, nhead= 2, layers= 1, dim_f= 256 -> best_epoch=126, best_val=0.001588, test_mse=0.001550, test_mae=0.029813
+d_model= 32, nhead= 2, layers= 1, dim_f= 512 -> best_epoch= 45, best_val=0.001706, test_mse=0.002053, test_mae=0.032726
+d_model= 32, nhead= 2, layers= 2, dim_f=  64 -> best_epoch= 79, best_val=0.000605, test_mse=0.000829, test_mae=0.018036
+d_model= 32, nhead= 2, layers= 2, dim_f= 128 -> best_epoch=134, best_val=0.001589, test_mse=0.001556, test_mae=0.027393
+d_model= 32, nhead= 2, layers= 2, dim_f= 256 -> best_epoch= 87, best_val=0.002668, test_mse=0.002642, test_mae=0.041478
+d_model= 32, nhead= 2, layers= 2, dim_f= 512 -> best_epoch=124, best_val=0.001311, test_mse=0.001298, test_mae=0.030903
+d_model= 32, nhead= 2, layers= 3, dim_f=  64 -> best_epoch=105, best_val=0.000879, test_mse=0.001053, test_mae=0.023088
+d_model= 32, nhead= 2, layers= 3, dim_f= 128 -> best_epoch=127, best_val=0.001173, test_mse=0.001219, test_mae=0.027265
+d_model= 32, nhead= 2, layers= 3, dim_f= 256 -> best_epoch=112, best_val=0.001939, test_mse=0.002122, test_mae=0.035013
+d_model= 32, nhead= 2, layers= 3, dim_f= 512 -> best_epoch=113, best_val=0.002224, test_mse=0.001951, test_mae=0.034058
+d_model= 32, nhead= 2, layers= 4, dim_f=  64 -> best_epoch=106, best_val=0.002181, test_mse=0.001857, test_mae=0.033184
+d_model= 32, nhead= 2, layers= 4, dim_f= 128 -> best_epoch= 41, best_val=2.670106, test_mse=2.631535, test_mae=1.137887
+d_model= 32, nhead= 2, layers= 4, dim_f= 256 -> best_epoch= 30, best_val=0.865590, test_mse=0.852482, test_mae=0.746135
+d_model= 32, nhead= 2, layers= 4, dim_f= 512 -> best_epoch= 92, best_val=0.940664, test_mse=0.886927, test_mae=0.797997
+d_model= 32, nhead= 4, layers= 1, dim_f=  64 -> best_epoch=117, best_val=0.001148, test_mse=0.000975, test_mae=0.025126
+d_model= 32, nhead= 4, layers= 1, dim_f= 128 -> best_epoch= 71, best_val=0.002834, test_mse=0.002806, test_mae=0.042868
+d_model= 32, nhead= 4, layers= 1, dim_f= 256 -> best_epoch= 63, best_val=0.001545, test_mse=0.001622, test_mae=0.031886
+d_model= 32, nhead= 4, layers= 1, dim_f= 512 -> best_epoch=126, best_val=0.001101, test_mse=0.001068, test_mae=0.026721
+d_model= 32, nhead= 4, layers= 2, dim_f=  64 -> best_epoch= 89, best_val=0.001271, test_mse=0.001201, test_mae=0.024566
+d_model= 32, nhead= 4, layers= 2, dim_f= 128 -> best_epoch=121, best_val=0.001389, test_mse=0.001263, test_mae=0.028511
+d_model= 32, nhead= 4, layers= 2, dim_f= 256 -> best_epoch=101, best_val=0.001205, test_mse=0.001177, test_mae=0.027690
+d_model= 32, nhead= 4, layers= 2, dim_f= 512 -> best_epoch=110, best_val=0.000813, test_mse=0.000693, test_mae=0.020637
+d_model= 32, nhead= 4, layers= 3, dim_f=  64 -> best_epoch=109, best_val=0.001078, test_mse=0.001176, test_mae=0.028741
+d_model= 32, nhead= 4, layers= 3, dim_f= 128 -> best_epoch= 89, best_val=0.001391, test_mse=0.001244, test_mae=0.027329
+d_model= 32, nhead= 4, layers= 3, dim_f= 256 -> best_epoch=102, best_val=0.000980, test_mse=0.000994, test_mae=0.025863
+d_model= 32, nhead= 4, layers= 3, dim_f= 512 -> best_epoch=118, best_val=0.002105, test_mse=0.001983, test_mae=0.034607
+d_model= 32, nhead= 4, layers= 4, dim_f=  64 -> best_epoch=101, best_val=0.001420, test_mse=0.001491, test_mae=0.032970
+d_model= 32, nhead= 4, layers= 4, dim_f= 128 -> best_epoch=104, best_val=0.000860, test_mse=0.000762, test_mae=0.021387
+d_model= 32, nhead= 4, layers= 4, dim_f= 256 -> best_epoch=137, best_val=0.001287, test_mse=0.001131, test_mae=0.026188
+d_model= 32, nhead= 4, layers= 4, dim_f= 512 -> best_epoch= 42, best_val=7.121169, test_mse=6.934282, test_mae=2.238034
+d_model= 32, nhead= 8, layers= 1, dim_f=  64 -> best_epoch= 89, best_val=0.001067, test_mse=0.000943, test_mae=0.020534
+d_model= 32, nhead= 8, layers= 1, dim_f= 128 -> best_epoch= 91, best_val=0.001900, test_mse=0.001905, test_mae=0.036735
+d_model= 32, nhead= 8, layers= 1, dim_f= 256 -> best_epoch= 80, best_val=0.001465, test_mse=0.001474, test_mae=0.029191
+d_model= 32, nhead= 8, layers= 1, dim_f= 512 -> best_epoch=120, best_val=0.001069, test_mse=0.001083, test_mae=0.026149
+d_model= 32, nhead= 8, layers= 2, dim_f=  64 -> best_epoch=100, best_val=0.000904, test_mse=0.000852, test_mae=0.021552
+d_model= 32, nhead= 8, layers= 2, dim_f= 128 -> best_epoch= 91, best_val=0.001145, test_mse=0.000969, test_mae=0.021342
+d_model= 32, nhead= 8, layers= 2, dim_f= 256 -> best_epoch= 95, best_val=0.001325, test_mse=0.001147, test_mae=0.026008
+d_model= 32, nhead= 8, layers= 2, dim_f= 512 -> best_epoch= 86, best_val=0.000990, test_mse=0.000811, test_mae=0.020701
+d_model= 32, nhead= 8, layers= 3, dim_f=  64 -> best_epoch=127, best_val=0.001677, test_mse=0.001438, test_mae=0.029695
+d_model= 32, nhead= 8, layers= 3, dim_f= 128 -> best_epoch= 91, best_val=0.000926, test_mse=0.001036, test_mae=0.026163
+d_model= 32, nhead= 8, layers= 3, dim_f= 256 -> best_epoch=108, best_val=0.001107, test_mse=0.000973, test_mae=0.023730
+d_model= 32, nhead= 8, layers= 3, dim_f= 512 -> best_epoch= 82, best_val=0.173398, test_mse=0.220457, test_mae=0.369206
+d_model= 32, nhead= 8, layers= 4, dim_f=  64 -> best_epoch=127, best_val=0.001736, test_mse=0.001585, test_mae=0.030212
+d_model= 32, nhead= 8, layers= 4, dim_f= 128 -> best_epoch= 24, best_val=4.241018, test_mse=4.029652, test_mae=1.554355
+d_model= 32, nhead= 8, layers= 4, dim_f= 256 -> best_epoch=125, best_val=0.005130, test_mse=0.004429, test_mae=0.048645
+d_model= 32, nhead= 8, layers= 4, dim_f= 512 -> best_epoch=155, best_val=0.016122, test_mse=0.017122, test_mae=0.102294
+d_model= 64, nhead= 1, layers= 1, dim_f=  64 -> best_epoch=140, best_val=0.000946, test_mse=0.001073, test_mae=0.028139
+d_model= 64, nhead= 1, layers= 1, dim_f= 128 -> best_epoch=111, best_val=0.001022, test_mse=0.001165, test_mae=0.026247
+d_model= 64, nhead= 1, layers= 1, dim_f= 256 -> best_epoch=103, best_val=0.001633, test_mse=0.001592, test_mae=0.030625
+d_model= 64, nhead= 1, layers= 1, dim_f= 512 -> best_epoch=126, best_val=0.001008, test_mse=0.001123, test_mae=0.028028
+d_model= 64, nhead= 1, layers= 2, dim_f=  64 -> best_epoch= 92, best_val=0.000488, test_mse=0.000502, test_mae=0.016312
+d_model= 64, nhead= 1, layers= 2, dim_f= 128 -> best_epoch=133, best_val=0.000970, test_mse=0.001078, test_mae=0.024995
+d_model= 64, nhead= 1, layers= 2, dim_f= 256 -> best_epoch= 86, best_val=0.000994, test_mse=0.000995, test_mae=0.025359
+d_model= 64, nhead= 1, layers= 2, dim_f= 512 -> best_epoch=114, best_val=0.000466, test_mse=0.000493, test_mae=0.017265
+d_model= 64, nhead= 1, layers= 3, dim_f=  64 -> best_epoch=117, best_val=0.000321, test_mse=0.000368, test_mae=0.015853
+d_model= 64, nhead= 1, layers= 3, dim_f= 128 -> best_epoch= 99, best_val=0.000783, test_mse=0.001108, test_mae=0.023707
+d_model= 64, nhead= 1, layers= 3, dim_f= 256 -> best_epoch= 18, best_val=1.743169, test_mse=2.066030, test_mae=1.252982
+d_model= 64, nhead= 1, layers= 3, dim_f= 512 -> best_epoch=115, best_val=0.000979, test_mse=0.001000, test_mae=0.023504
+d_model= 64, nhead= 1, layers= 4, dim_f=  64 -> best_epoch= 54, best_val=0.004283, test_mse=0.005177, test_mae=0.063860
+d_model= 64, nhead= 1, layers= 4, dim_f= 128 -> best_epoch= 15, best_val=2.761117, test_mse=2.762671, test_mae=1.353643
+d_model= 64, nhead= 1, layers= 4, dim_f= 256 -> best_epoch= 27, best_val=2.870189, test_mse=2.653884, test_mae=1.291169
+d_model= 64, nhead= 1, layers= 4, dim_f= 512 -> best_epoch= 34, best_val=2.588603, test_mse=2.992864, test_mae=1.370759
+d_model= 64, nhead= 2, layers= 1, dim_f=  64 -> best_epoch= 85, best_val=0.000382, test_mse=0.000427, test_mae=0.016380
+d_model= 64, nhead= 2, layers= 1, dim_f= 128 -> best_epoch=120, best_val=0.000646, test_mse=0.000610, test_mae=0.019058
+d_model= 64, nhead= 2, layers= 1, dim_f= 256 -> best_epoch=134, best_val=0.000934, test_mse=0.000927, test_mae=0.024318
+d_model= 64, nhead= 2, layers= 1, dim_f= 512 -> best_epoch=114, best_val=0.000710, test_mse=0.000671, test_mae=0.021442
+d_model= 64, nhead= 2, layers= 2, dim_f=  64 -> best_epoch=127, best_val=0.000239, test_mse=0.000257, test_mae=0.009671
+d_model= 64, nhead= 2, layers= 2, dim_f= 128 -> best_epoch=119, best_val=0.000815, test_mse=0.000782, test_mae=0.021511
+d_model= 64, nhead= 2, layers= 2, dim_f= 256 -> best_epoch= 98, best_val=0.000535, test_mse=0.000577, test_mae=0.018746
+d_model= 64, nhead= 2, layers= 2, dim_f= 512 -> best_epoch=107, best_val=0.000539, test_mse=0.000534, test_mae=0.017705
+d_model= 64, nhead= 2, layers= 3, dim_f=  64 -> best_epoch= 61, best_val=0.001095, test_mse=0.001256, test_mae=0.025642
+d_model= 64, nhead= 2, layers= 3, dim_f= 128 -> best_epoch= 97, best_val=0.003932, test_mse=0.004030, test_mae=0.050188
+d_model= 64, nhead= 2, layers= 3, dim_f= 256 -> best_epoch=105, best_val=0.000823, test_mse=0.001084, test_mae=0.022875
+d_model= 64, nhead= 2, layers= 3, dim_f= 512 -> best_epoch= 24, best_val=0.045465, test_mse=0.042017, test_mae=0.164659
+d_model= 64, nhead= 2, layers= 4, dim_f=  64 -> best_epoch= 73, best_val=0.001129, test_mse=0.001003, test_mae=0.026225
+d_model= 64, nhead= 2, layers= 4, dim_f= 128 -> best_epoch= 10, best_val=0.911228, test_mse=1.167749, test_mae=0.935690
+d_model= 64, nhead= 2, layers= 4, dim_f= 256 -> best_epoch=  6, best_val=7.179190, test_mse=7.099684, test_mae=2.248052
+d_model= 64, nhead= 2, layers= 4, dim_f= 512 -> best_epoch=149, best_val=0.397014, test_mse=0.377103, test_mae=0.480977
+d_model= 64, nhead= 4, layers= 1, dim_f=  64 -> best_epoch=102, best_val=0.000287, test_mse=0.000360, test_mae=0.014400
+d_model= 64, nhead= 4, layers= 1, dim_f= 128 -> best_epoch=118, best_val=0.000677, test_mse=0.000839, test_mae=0.020452
+d_model= 64, nhead= 4, layers= 1, dim_f= 256 -> best_epoch=104, best_val=0.000814, test_mse=0.000935, test_mae=0.023226
+d_model= 64, nhead= 4, layers= 1, dim_f= 512 -> best_epoch= 71, best_val=0.000943, test_mse=0.000985, test_mae=0.025568
+d_model= 64, nhead= 4, layers= 2, dim_f=  64 -> best_epoch= 87, best_val=0.000345, test_mse=0.000317, test_mae=0.013157
+d_model= 64, nhead= 4, layers= 2, dim_f= 128 -> best_epoch=122, best_val=0.000293, test_mse=0.000275, test_mae=0.013504
+d_model= 64, nhead= 4, layers= 2, dim_f= 256 -> best_epoch= 99, best_val=0.000564, test_mse=0.000628, test_mae=0.019397
+d_model= 64, nhead= 4, layers= 2, dim_f= 512 -> best_epoch=123, best_val=0.000385, test_mse=0.000454, test_mae=0.016037
+d_model= 64, nhead= 4, layers= 3, dim_f=  64 -> best_epoch=117, best_val=0.000266, test_mse=0.000279, test_mae=0.011698
+d_model= 64, nhead= 4, layers= 3, dim_f= 128 -> best_epoch= 54, best_val=0.000832, test_mse=0.001036, test_mae=0.026214
+d_model= 64, nhead= 4, layers= 3, dim_f= 256 -> best_epoch=101, best_val=0.002234, test_mse=0.002728, test_mae=0.040198
+d_model= 64, nhead= 4, layers= 3, dim_f= 512 -> best_epoch=131, best_val=0.016450, test_mse=0.018566, test_mae=0.114683
+d_model= 64, nhead= 4, layers= 4, dim_f=  64 -> best_epoch= 81, best_val=0.001510, test_mse=0.001499, test_mae=0.031867
+d_model= 64, nhead= 4, layers= 4, dim_f= 128 -> best_epoch=126, best_val=0.809194, test_mse=0.791341, test_mae=0.749759
+d_model= 64, nhead= 4, layers= 4, dim_f= 256 -> best_epoch= 17, best_val=4.614002, test_mse=4.393527, test_mae=1.663345
+d_model= 64, nhead= 4, layers= 4, dim_f= 512 -> best_epoch=132, best_val=0.896758, test_mse=0.898629, test_mae=0.765122
+d_model= 64, nhead= 8, layers= 1, dim_f=  64 -> best_epoch= 94, best_val=0.000297, test_mse=0.000315, test_mae=0.013930
+d_model= 64, nhead= 8, layers= 1, dim_f= 128 -> best_epoch=134, best_val=0.000422, test_mse=0.000450, test_mae=0.015820
+d_model= 64, nhead= 8, layers= 1, dim_f= 256 -> best_epoch= 78, best_val=0.000891, test_mse=0.000930, test_mae=0.022924
+d_model= 64, nhead= 8, layers= 1, dim_f= 512 -> best_epoch=114, best_val=0.000477, test_mse=0.000579, test_mae=0.017531
+d_model= 64, nhead= 8, layers= 2, dim_f=  64 -> best_epoch= 44, best_val=0.001444, test_mse=0.001586, test_mae=0.030908
+d_model= 64, nhead= 8, layers= 2, dim_f= 128 -> best_epoch= 89, best_val=0.000406, test_mse=0.000419, test_mae=0.014430
+d_model= 64, nhead= 8, layers= 2, dim_f= 256 -> best_epoch= 74, best_val=0.000523, test_mse=0.000731, test_mae=0.017726
+d_model= 64, nhead= 8, layers= 2, dim_f= 512 -> best_epoch=102, best_val=0.000514, test_mse=0.000580, test_mae=0.018641
+d_model= 64, nhead= 8, layers= 3, dim_f=  64 -> best_epoch= 28, best_val=0.006645, test_mse=0.007500, test_mae=0.074045
+d_model= 64, nhead= 8, layers= 3, dim_f= 128 -> best_epoch=114, best_val=0.000428, test_mse=0.000537, test_mae=0.016862
+d_model= 64, nhead= 8, layers= 3, dim_f= 256 -> best_epoch= 98, best_val=0.000827, test_mse=0.000924, test_mae=0.021979
+d_model= 64, nhead= 8, layers= 3, dim_f= 512 -> best_epoch=138, best_val=0.000660, test_mse=0.000720, test_mae=0.022085
+d_model= 64, nhead= 8, layers= 4, dim_f=  64 -> best_epoch= 63, best_val=0.001790, test_mse=0.001783, test_mae=0.037475
+d_model= 64, nhead= 8, layers= 4, dim_f= 128 -> best_epoch= 75, best_val=0.000828, test_mse=0.000800, test_mae=0.022134
+d_model= 64, nhead= 8, layers= 4, dim_f= 256 -> best_epoch=130, best_val=0.001333, test_mse=0.001305, test_mae=0.026593
+d_model= 64, nhead= 8, layers= 4, dim_f= 512 -> best_epoch= 11, best_val=7.178353, test_mse=7.105876, test_mae=2.248159
+d_model=128, nhead= 1, layers= 1, dim_f=  64 -> best_epoch=123, best_val=0.877496, test_mse=1.030891, test_mae=0.490736
+d_model=128, nhead= 1, layers= 1, dim_f= 128 -> best_epoch=139, best_val=0.004940, test_mse=0.003875, test_mae=0.047080
+d_model=128, nhead= 1, layers= 1, dim_f= 256 -> best_epoch=115, best_val=0.001033, test_mse=0.001128, test_mae=0.028045
+d_model=128, nhead= 1, layers= 1, dim_f= 512 -> best_epoch=106, best_val=0.000791, test_mse=0.000689, test_mae=0.020236
+d_model=128, nhead= 1, layers= 2, dim_f=  64 -> best_epoch= 19, best_val=3.500095, test_mse=3.303138, test_mae=1.340445
+d_model=128, nhead= 1, layers= 2, dim_f= 128 -> best_epoch=140, best_val=1.191504, test_mse=0.956015, test_mae=0.681478
+d_model=128, nhead= 1, layers= 2, dim_f= 256 -> best_epoch=137, best_val=0.006633, test_mse=0.008165, test_mae=0.064407
+d_model=128, nhead= 1, layers= 2, dim_f= 512 -> best_epoch= 32, best_val=1.743504, test_mse=2.593753, test_mae=1.317422
+d_model=128, nhead= 1, layers= 3, dim_f=  64 -> best_epoch=  3, best_val=7.169812, test_mse=7.106453, test_mae=2.246428
+d_model=128, nhead= 1, layers= 3, dim_f= 128 -> best_epoch=  8, best_val=7.178144, test_mse=7.107314, test_mae=2.248142
+d_model=128, nhead= 1, layers= 3, dim_f= 256 -> best_epoch=  4, best_val=5.645844, test_mse=5.652015, test_mae=1.944505
+d_model=128, nhead= 1, layers= 3, dim_f= 512 -> best_epoch= 53, best_val=7.178609, test_mse=7.104030, test_mae=2.248158
+d_model=128, nhead= 1, layers= 4, dim_f=  64 -> best_epoch= 21, best_val=7.175949, test_mse=7.119292, test_mae=2.247107
+d_model=128, nhead= 1, layers= 4, dim_f= 128 -> best_epoch= 49, best_val=6.836618, test_mse=6.160515, test_mae=2.061688
+d_model=128, nhead= 1, layers= 4, dim_f= 256 -> best_epoch= 20, best_val=6.970949, test_mse=6.852880, test_mae=2.209358
+d_model=128, nhead= 1, layers= 4, dim_f= 512 -> best_epoch= 32, best_val=7.111242, test_mse=7.004361, test_mae=2.236499
+d_model=128, nhead= 2, layers= 1, dim_f=  64 -> best_epoch=111, best_val=0.001155, test_mse=0.000917, test_mae=0.023959
+d_model=128, nhead= 2, layers= 1, dim_f= 128 -> best_epoch=139, best_val=0.001063, test_mse=0.000900, test_mae=0.025449
+d_model=128, nhead= 2, layers= 1, dim_f= 256 -> best_epoch=135, best_val=0.000335, test_mse=0.000419, test_mae=0.013939
+d_model=128, nhead= 2, layers= 1, dim_f= 512 -> best_epoch= 86, best_val=0.001697, test_mse=0.001964, test_mae=0.026342
+d_model=128, nhead= 2, layers= 2, dim_f=  64 -> best_epoch= 86, best_val=0.000809, test_mse=0.000936, test_mae=0.025066
+d_model=128, nhead= 2, layers= 2, dim_f= 128 -> best_epoch=121, best_val=0.006507, test_mse=0.007835, test_mae=0.063891
+d_model=128, nhead= 2, layers= 2, dim_f= 256 -> best_epoch=152, best_val=0.004402, test_mse=0.004467, test_mae=0.050091
+d_model=128, nhead= 2, layers= 2, dim_f= 512 -> best_epoch= 11, best_val=0.391919, test_mse=0.541404, test_mae=0.569118
+d_model=128, nhead= 2, layers= 3, dim_f=  64 -> best_epoch=124, best_val=0.002245, test_mse=0.001851, test_mae=0.033011
+d_model=128, nhead= 2, layers= 3, dim_f= 128 -> best_epoch=  8, best_val=1.911688, test_mse=2.294212, test_mae=1.260027
+d_model=128, nhead= 2, layers= 3, dim_f= 256 -> best_epoch= 13, best_val=3.739950, test_mse=3.127877, test_mae=1.372274
+d_model=128, nhead= 2, layers= 3, dim_f= 512 -> best_epoch=  3, best_val=2.642315, test_mse=2.760084, test_mae=1.367219
+d_model=128, nhead= 2, layers= 4, dim_f=  64 -> best_epoch= 23, best_val=7.178243, test_mse=7.109272, test_mae=2.248155
+d_model=128, nhead= 2, layers= 4, dim_f= 128 -> best_epoch= 14, best_val=7.178400, test_mse=7.112247, test_mae=2.248142
+d_model=128, nhead= 2, layers= 4, dim_f= 256 -> best_epoch= 17, best_val=1.959623, test_mse=2.215147, test_mae=1.195582
+d_model=128, nhead= 2, layers= 4, dim_f= 512 -> best_epoch= 62, best_val=7.178528, test_mse=7.112789, test_mae=2.248155
+d_model=128, nhead= 4, layers= 1, dim_f=  64 -> best_epoch=103, best_val=0.000305, test_mse=0.000355, test_mae=0.015663
+d_model=128, nhead= 4, layers= 1, dim_f= 128 -> best_epoch=102, best_val=0.001035, test_mse=0.001039, test_mae=0.023992
+d_model=128, nhead= 4, layers= 1, dim_f= 256 -> best_epoch=109, best_val=0.000575, test_mse=0.000652, test_mae=0.020534
+d_model=128, nhead= 4, layers= 1, dim_f= 512 -> best_epoch= 98, best_val=0.000702, test_mse=0.000909, test_mae=0.018900
+d_model=128, nhead= 4, layers= 2, dim_f=  64 -> best_epoch= 27, best_val=0.004588, test_mse=0.004316, test_mae=0.050578
+d_model=128, nhead= 4, layers= 2, dim_f= 128 -> best_epoch= 59, best_val=0.001127, test_mse=0.001416, test_mae=0.028933
+d_model=128, nhead= 4, layers= 2, dim_f= 256 -> best_epoch=138, best_val=0.002244, test_mse=0.001820, test_mae=0.027803
+d_model=128, nhead= 4, layers= 2, dim_f= 512 -> best_epoch=145, best_val=0.000980, test_mse=0.000980, test_mae=0.022342
+d_model=128, nhead= 4, layers= 3, dim_f=  64 -> best_epoch= 70, best_val=0.001394, test_mse=0.001492, test_mae=0.028339
+d_model=128, nhead= 4, layers= 3, dim_f= 128 -> best_epoch=118, best_val=0.079452, test_mse=0.070019, test_mae=0.185428
+d_model=128, nhead= 4, layers= 3, dim_f= 256 -> best_epoch= 11, best_val=1.755700, test_mse=2.124430, test_mae=1.267582
+d_model=128, nhead= 4, layers= 3, dim_f= 512 -> best_epoch=  5, best_val=2.651478, test_mse=2.961987, test_mae=1.405834
+d_model=128, nhead= 4, layers= 4, dim_f=  64 -> best_epoch= 17, best_val=6.793094, test_mse=6.647037, test_mae=2.172206
+d_model=128, nhead= 4, layers= 4, dim_f= 128 -> best_epoch=110, best_val=3.525389, test_mse=3.803347, test_mae=1.586676
+d_model=128, nhead= 4, layers= 4, dim_f= 256 -> best_epoch= 21, best_val=7.178078, test_mse=7.106800, test_mae=2.248125
+d_model=128, nhead= 4, layers= 4, dim_f= 512 -> best_epoch= 28, best_val=7.178326, test_mse=7.105970, test_mae=2.248156
+d_model=128, nhead= 8, layers= 1, dim_f=  64 -> best_epoch=128, best_val=0.000239, test_mse=0.000264, test_mae=0.012745
+d_model=128, nhead= 8, layers= 1, dim_f= 128 -> best_epoch=123, best_val=0.000625, test_mse=0.000651, test_mae=0.021423
+d_model=128, nhead= 8, layers= 1, dim_f= 256 -> best_epoch=107, best_val=0.000524, test_mse=0.000676, test_mae=0.018519
+d_model=128, nhead= 8, layers= 1, dim_f= 512 -> best_epoch= 84, best_val=0.000229, test_mse=0.000218, test_mae=0.010396
+d_model=128, nhead= 8, layers= 2, dim_f=  64 -> best_epoch= 53, best_val=0.002272, test_mse=0.002269, test_mae=0.041338
+d_model=128, nhead= 8, layers= 2, dim_f= 128 -> best_epoch=146, best_val=0.011720, test_mse=0.008185, test_mae=0.063312
+d_model=128, nhead= 8, layers= 2, dim_f= 256 -> best_epoch=144, best_val=0.000454, test_mse=0.000532, test_mae=0.016962
+d_model=128, nhead= 8, layers= 2, dim_f= 512 -> best_epoch= 83, best_val=0.000447, test_mse=0.000465, test_mae=0.017379
+d_model=128, nhead= 8, layers= 3, dim_f=  64 -> best_epoch=109, best_val=0.004545, test_mse=0.003667, test_mae=0.049618
+d_model=128, nhead= 8, layers= 3, dim_f= 128 -> best_epoch=120, best_val=0.007166, test_mse=0.007461, test_mae=0.073164
+d_model=128, nhead= 8, layers= 3, dim_f= 256 -> best_epoch=  7, best_val=6.417123, test_mse=6.240774, test_mae=2.102377
+d_model=128, nhead= 8, layers= 3, dim_f= 512 -> best_epoch= 19, best_val=4.687281, test_mse=4.542837, test_mae=1.712222
+d_model=128, nhead= 8, layers= 4, dim_f=  64 -> best_epoch= 14, best_val=1.928392, test_mse=2.032164, test_mae=1.238315
+d_model=128, nhead= 8, layers= 4, dim_f= 128 -> best_epoch= 85, best_val=7.178412, test_mse=7.111758, test_mae=2.248156
+d_model=128, nhead= 8, layers= 4, dim_f= 256 -> best_epoch= 38, best_val=1.798886, test_mse=2.094566, test_mae=1.220470
+d_model=128, nhead= 8, layers= 4, dim_f= 512 -> best_epoch= 62, best_val=7.178616, test_mse=7.113408, test_mae=2.248156
+d_model=256, nhead= 1, layers= 1, dim_f=  64 -> best_epoch=116, best_val=0.005918, test_mse=0.005995, test_mae=0.060254
+d_model=256, nhead= 1, layers= 1, dim_f= 128 -> best_epoch=122, best_val=0.001491, test_mse=0.001592, test_mae=0.030399
+d_model=256, nhead= 1, layers= 1, dim_f= 256 -> best_epoch=147, best_val=0.000394, test_mse=0.000348, test_mae=0.014899
+d_model=256, nhead= 1, layers= 1, dim_f= 512 -> best_epoch=140, best_val=0.002157, test_mse=0.002239, test_mae=0.036709
+d_model=256, nhead= 1, layers= 2, dim_f=  64 -> best_epoch= 69, best_val=13.568675, test_mse=12.894659, test_mae=2.975946
+d_model=256, nhead= 1, layers= 2, dim_f= 128 -> best_epoch=  1, best_val=7.252357, test_mse=7.263753, test_mae=2.256016
+d_model=256, nhead= 1, layers= 2, dim_f= 256 -> best_epoch=  1, best_val=7.177022, test_mse=7.100044, test_mae=2.247962
+d_model=256, nhead= 1, layers= 2, dim_f= 512 -> best_epoch=  1, best_val=7.267019, test_mse=7.125672, test_mae=2.264556
+d_model=256, nhead= 1, layers= 3, dim_f=  64 -> best_epoch= 67, best_val=7.182529, test_mse=7.096823, test_mae=2.248156
+d_model=256, nhead= 1, layers= 3, dim_f= 128 -> best_epoch= 81, best_val=7.178311, test_mse=7.106144, test_mae=2.248156
+d_model=256, nhead= 1, layers= 3, dim_f= 256 -> best_epoch= 32, best_val=7.177809, test_mse=7.109116, test_mae=2.248062
+d_model=256, nhead= 1, layers= 3, dim_f= 512 -> best_epoch= 73, best_val=7.178224, test_mse=7.108184, test_mae=2.248156
+d_model=256, nhead= 1, layers= 4, dim_f=  64 -> best_epoch= 69, best_val=7.178268, test_mse=7.106691, test_mae=2.248155
+d_model=256, nhead= 1, layers= 4, dim_f= 128 -> best_epoch=  3, best_val=7.178224, test_mse=7.108989, test_mae=2.248155
+d_model=256, nhead= 1, layers= 4, dim_f= 256 -> best_epoch= 32, best_val=7.178360, test_mse=7.111219, test_mae=2.248156
+d_model=256, nhead= 1, layers= 4, dim_f= 512 -> best_epoch= 32, best_val=7.179145, test_mse=7.101962, test_mae=2.248156
+d_model=256, nhead= 2, layers= 1, dim_f=  64 -> best_epoch=118, best_val=0.000868, test_mse=0.000821, test_mae=0.020564
+d_model=256, nhead= 2, layers= 1, dim_f= 128 -> best_epoch=134, best_val=0.002843, test_mse=0.003046, test_mae=0.043202
+d_model=256, nhead= 2, layers= 1, dim_f= 256 -> best_epoch=119, best_val=0.000676, test_mse=0.000662, test_mae=0.019946
+d_model=256, nhead= 2, layers= 1, dim_f= 512 -> best_epoch= 54, best_val=0.000840, test_mse=0.000756, test_mae=0.021790
+d_model=256, nhead= 2, layers= 2, dim_f=  64 -> best_epoch=134, best_val=0.051478, test_mse=0.052457, test_mae=0.189085
+d_model=256, nhead= 2, layers= 2, dim_f= 128 -> best_epoch=149, best_val=0.059280, test_mse=0.054458, test_mae=0.206804
+d_model=256, nhead= 2, layers= 2, dim_f= 256 -> best_epoch= 61, best_val=2.000421, test_mse=1.945742, test_mae=1.142704
+d_model=256, nhead= 2, layers= 2, dim_f= 512 -> best_epoch= 19, best_val=7.149046, test_mse=7.151859, test_mae=2.245378
+d_model=256, nhead= 2, layers= 3, dim_f=  64 -> best_epoch= 10, best_val=7.177019, test_mse=7.069252, test_mae=2.248066
+d_model=256, nhead= 2, layers= 3, dim_f= 128 -> best_epoch=  3, best_val=7.082290, test_mse=7.079534, test_mae=2.225798
+d_model=256, nhead= 2, layers= 3, dim_f= 256 -> best_epoch=143, best_val=1.828253, test_mse=2.182287, test_mae=1.258713
+d_model=256, nhead= 2, layers= 3, dim_f= 512 -> best_epoch= 45, best_val=7.179198, test_mse=7.101811, test_mae=2.248156
+d_model=256, nhead= 2, layers= 4, dim_f=  64 -> best_epoch= 69, best_val=7.178274, test_mse=7.106629, test_mae=2.248156
+d_model=256, nhead= 2, layers= 4, dim_f= 128 -> best_epoch=  3, best_val=7.178252, test_mse=7.109668, test_mae=2.248156
+d_model=256, nhead= 2, layers= 4, dim_f= 256 -> best_epoch= 32, best_val=7.178471, test_mse=7.104780, test_mae=2.248156
+d_model=256, nhead= 2, layers= 4, dim_f= 512 -> best_epoch= 32, best_val=7.179112, test_mse=7.102062, test_mae=2.248156
+d_model=256, nhead= 4, layers= 1, dim_f=  64 -> best_epoch=127, best_val=0.000310, test_mse=0.000396, test_mae=0.013577
+d_model=256, nhead= 4, layers= 1, dim_f= 128 -> best_epoch=104, best_val=0.000891, test_mse=0.001113, test_mae=0.023702
+d_model=256, nhead= 4, layers= 1, dim_f= 256 -> best_epoch=109, best_val=0.001026, test_mse=0.001124, test_mae=0.025702
+d_model=256, nhead= 4, layers= 1, dim_f= 512 -> best_epoch=138, best_val=0.000933, test_mse=0.001030, test_mae=0.021593
+d_model=256, nhead= 4, layers= 2, dim_f=  64 -> best_epoch=109, best_val=0.000830, test_mse=0.000942, test_mae=0.025239
+d_model=256, nhead= 4, layers= 2, dim_f= 128 -> best_epoch=140, best_val=0.067352, test_mse=0.059434, test_mae=0.186722
+d_model=256, nhead= 4, layers= 2, dim_f= 256 -> best_epoch=  8, best_val=1.702646, test_mse=1.993104, test_mae=1.228311
+d_model=256, nhead= 4, layers= 2, dim_f= 512 -> best_epoch=109, best_val=0.122688, test_mse=0.125422, test_mae=0.307306
+d_model=256, nhead= 4, layers= 3, dim_f=  64 -> best_epoch=141, best_val=7.124449, test_mse=6.962743, test_mae=2.235200
+d_model=256, nhead= 4, layers= 3, dim_f= 128 -> best_epoch=  4, best_val=6.790916, test_mse=6.725615, test_mae=2.173650
+d_model=256, nhead= 4, layers= 3, dim_f= 256 -> best_epoch= 72, best_val=7.178244, test_mse=7.109359, test_mae=2.248156
+d_model=256, nhead= 4, layers= 3, dim_f= 512 -> best_epoch= 45, best_val=7.179053, test_mse=7.102159, test_mae=2.248152
+d_model=256, nhead= 4, layers= 4, dim_f=  64 -> best_epoch= 69, best_val=7.178261, test_mse=7.106864, test_mae=2.248156
+d_model=256, nhead= 4, layers= 4, dim_f= 128 -> best_epoch= 44, best_val=7.169857, test_mse=7.087706, test_mae=2.246804
+d_model=256, nhead= 4, layers= 4, dim_f= 256 -> best_epoch= 47, best_val=7.178224, test_mse=7.108185, test_mae=2.248156
+d_model=256, nhead= 4, layers= 4, dim_f= 512 -> best_epoch= 32, best_val=7.179116, test_mse=7.102051, test_mae=2.248156
+d_model=256, nhead= 8, layers= 1, dim_f=  64 -> best_epoch=117, best_val=0.000190, test_mse=0.000247, test_mae=0.011217
+d_model=256, nhead= 8, layers= 1, dim_f= 128 -> best_epoch=113, best_val=0.000204, test_mse=0.000222, test_mae=0.010697
+d_model=256, nhead= 8, layers= 1, dim_f= 256 -> best_epoch=115, best_val=0.000172, test_mse=0.000176, test_mae=0.010684
+d_model=256, nhead= 8, layers= 1, dim_f= 512 -> best_epoch=109, best_val=0.000515, test_mse=0.000555, test_mae=0.012654
+d_model=256, nhead= 8, layers= 2, dim_f=  64 -> best_epoch=146, best_val=0.524613, test_mse=0.490685, test_mae=0.456488
+d_model=256, nhead= 8, layers= 2, dim_f= 128 -> best_epoch=103, best_val=0.002734, test_mse=0.003159, test_mae=0.042108
+d_model=256, nhead= 8, layers= 2, dim_f= 256 -> best_epoch=115, best_val=0.002748, test_mse=0.003352, test_mae=0.047295
+d_model=256, nhead= 8, layers= 2, dim_f= 512 -> best_epoch= 71, best_val=0.318595, test_mse=0.328851, test_mae=0.456485
+d_model=256, nhead= 8, layers= 3, dim_f=  64 -> best_epoch= 69, best_val=7.178273, test_mse=7.110152, test_mae=2.248155
+d_model=256, nhead= 8, layers= 3, dim_f= 128 -> best_epoch= 23, best_val=7.178957, test_mse=7.102553, test_mae=2.248157
+d_model=256, nhead= 8, layers= 3, dim_f= 256 -> best_epoch= 72, best_val=7.178134, test_mse=7.110742, test_mae=2.248124
+d_model=256, nhead= 8, layers= 3, dim_f= 512 -> best_epoch= 63, best_val=7.178854, test_mse=7.114930, test_mae=2.248155
+d_model=256, nhead= 8, layers= 4, dim_f=  64 -> best_epoch= 69, best_val=7.178265, test_mse=7.106790, test_mae=2.248156
+d_model=256, nhead= 8, layers= 4, dim_f= 128 -> best_epoch=  3, best_val=7.178229, test_mse=7.107845, test_mae=2.248156
+d_model=256, nhead= 8, layers= 4, dim_f= 256 -> best_epoch= 47, best_val=7.178224, test_mse=7.108188, test_mae=2.248156
+d_model=256, nhead= 8, layers= 4, dim_f= 512 -> best_epoch= 45, best_val=7.179122, test_mse=7.102032, test_mae=2.248156
