@@ -4,7 +4,9 @@ from .imports_and_libraries import *
 #positional encoding (copy of pytorch tutorial)
 #anti-permutation - for model to know order in time
 class PositionalEncoding(nn.Module):
-    def __init__(self, d_model: int, max_len: int):
+    '''Standard positional encoding class from PyTorch tutorial'''
+
+    def __init__(self, d_model: int=cfg.dmodel, max_len: int=cfg.discr_of_time):
         super().__init__()
         pe = torch.zeros(max_len, d_model)
         pos = torch.arange(0, max_len, dtype=torch.float32).unsqueeze(1)

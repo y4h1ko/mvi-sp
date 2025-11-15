@@ -4,7 +4,11 @@ from .positional_encodings import *
 
 #e-only transformer, head (w)
 class TransformerModel1(nn.Module):
-    def __init__(self, seq_len: int=1, d_model: int = 128, nhead: int = 4, num_layers: int = 2, dim_f: int = 128, dropout: float = 0.1):
+    '''Transformer model for time-series prediction using only encoder layers.'''
+
+    def __init__(self, seq_len: int=cfg.discr_of_time, d_model: int=cfg.dmodel, nhead: int=cfg.nhead, num_layers: int=cfg.num_layers, 
+                 dim_f: int=cfg.dim_f, dropout: float=cfg.dropout):
+        
         super().__init__()
 
         self.input_embedding = nn.Linear(1, d_model)
@@ -16,6 +20,8 @@ class TransformerModel1(nn.Module):
         self.head = nn.Sequential(nn.LayerNorm(d_model), nn.Linear(d_model, 1))     #normalization and prediction for w
 
     def forward(self, src):
+        '''Forward pass'''
+
         src = src.unsqueeze(-1)
 
         src = self.input_embedding(src)

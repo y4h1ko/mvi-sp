@@ -8,4 +8,4 @@ import csv
 from torch.utils.data import TensorDataset, DataLoader, random_split
 
 #custom import
-from .configuration import *
+from .configuration import cfg

@@ -12,14 +12,14 @@ def main():
     device = set_device()
 
     #setup for model and more
-    model = TransformerModel1(seq_len=DISCR_OF_TIME, d_model=128, nhead=4, num_layers=2, dim_f=256, dropout=0.1).to(device)
+    model = TransformerModel1().to(device)
     criterion = nn.MSELoss()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=3e-3, weight_decay=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.learning_rate, weight_decay=cfg.weight_decay)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs)
 
 
     #creating dataset and converting to tensor dataset
-    V_np, tar_np, t_np = make_sine_dataset()
+    V_np, tar_np, t_np = make_sine_dataset(noise=True)
     ds_full = from_array_to_tensor_dataset(V_np, tar_np)
 
 
@@ -39,6 +39,7 @@ def main():
     #plots - save or show option
     plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=False, show_plot=True)
     plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True)
+    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True, y_limit=0.01)
 
 
 

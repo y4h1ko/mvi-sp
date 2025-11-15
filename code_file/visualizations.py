@@ -1,7 +1,46 @@
 from .imports_and_libraries import *
+from .dataset_creation import *
 
 
-def plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot: bool=False, show_plot: bool=False):
+def plot_wave_samples(t, V_clean, V_noisy, w: float=1.0, mu: float=cfg.mu, sigma: float=cfg.noise_std, save_plot: bool=False, show_plot: bool=False):
+    '''Plot a single sine wave with and without Gaussian noise as example.
+    
+    - save_plot: when True, saves the plot to the specified folder as .png
+    - show_plot: when True, displays the plot on the screen
+    
+    Saved plot name is like: 'sine_with_noise_mu{mu}_sigma{sigma}_example.png'''
+
+    plt.figure(figsize=(8,6))
+    plt.plot(t, V_clean, label="clean sine", linewidth=2)
+    plt.scatter(t, V_noisy, s=15, alpha=0.7, label="noisy sample", c='black', marker='x')
+
+    plt.xlabel("t")
+    plt.ylabel("sin(w*t)")
+    plt.title(f"Sine example with noise (w={w:.3f}, mu={mu}, sigma={sigma})")
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+    plt.legend()
+    plt.tight_layout()
+
+    if save_plot:
+        plt.savefig(cfg.plots_dir / f"sine_with_noise_mu{mu}_sigma{sigma}_example.png", dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close()
+
+
+def plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, N: int=cfg.num_of_samples, t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, 
+                      w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, save_plot: bool=False, show_plot: bool=False):
+    '''Plot predicted vs true values frequencies into scatter plot from test set.
+    
+    - save_plot: if True, saves the plot to the specified folder as .png
+    - show_plot: if True, displays the plot on the screen
+    - other optional parameters are for plot title and filename
+
+    Saved plot name is like: 'T1_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_PREDvsREAL.png'
+    '''
+
     plt.figure(figsize=(6,6))
     plt.scatter(y_true.numpy(), y_pred.numpy(), s=14, alpha=0.6)
     mn = min(y_true.min().item(), y_pred.min().item())
@@ -10,15 +49,31 @@ def plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot: bool=False,
     plt.grid(True, which="both")
     plt.xlabel("True w")
     plt.ylabel("Predicted w")
-    plt.title(f"Test N={NUM_OF_SAMPLES}, w=[{OMEGA_MIN}-{OMEGA_MAX}], tdis={DISCR_OF_TIME}\nMSE={test_mse:.6f}, MAE={test_mae:.6f}")
+    plt.title(f"Test N={N}, w=[{w_min}-{w_max}], tdis={t_disc}\nMSE={test_mse:.6f}, MAE={test_mae:.6f}")
     plt.tight_layout()
     if save_plot:
-        plt.savefig(PLOTS_DIR / f"T1_w{OMEGA_MIN}-{OMEGA_MAX}_N{NUM_OF_SAMPLES}_tdis{DISCR_OF_TIME}_seed{SEED}_PREDvsREAL.png", dpi=300)
+        plt.savefig(folder / f"T1_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_PREDvsREAL.png", dpi=300)
     if show_plot:
         plt.show()
+    
+    plt.close()
 
-def plot_loss_curves(train_mse_hist, val_mse_hist, save_plot: bool=False, show_plot: bool=False, epochs: int=EPOCHS, N: int=NUM_OF_SAMPLES, 
-                     t_disc: int=DISCR_OF_TIME, name_suf: str="", y_limit: float=None, zoom: str="full"):
+
+def plot_loss_curves(train_mse_hist, val_mse_hist, epochs: int=cfg.epochs, N: int=cfg.num_of_samples, t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, 
+                     w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, save_plot: bool=False, show_plot: bool=False, y_limit: float=None, zoom: str="full", 
+                     name_suf: str=""):
+    '''Plot training and validation loss curves over epochs.
+    
+    - save_plot: if True, saves the plot to the specified folder as .png
+    - show_plot: if True, displays the plot on the screen
+    - y_limit: sets the y-axis limit for better detail
+    - zoom: defualt is 'full', when y_limit is set, recomended to set as y_limit value for recognition in filename
+    - other optional parameters are for plot title and filename
+    
+    Saved plot name is like: 'T1{name_suf}_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_LOSSf_{zoom}.png'
+    '''
+
+
     epochs_axis = range(1, epochs + 1)
     plt.figure(figsize=(8,5))
     plt.minorticks_on()
@@ -28,19 +83,29 @@ def plot_loss_curves(train_mse_hist, val_mse_hist, save_plot: bool=False, show_p
     plt.xlabel("Epoch")
     plt.ylabel("Loss (MSE)")
     plt.ylim(bottom=0, top=y_limit)
-    plt.title(f"Training/Validation Loss \n N={N}, w=[{OMEGA_MIN}-{OMEGA_MAX}], tdis={t_disc}")
+    plt.title(f"Training/Validation Loss \n N={N}, w=[{w_min}-{w_max}], tdis={t_disc}")
     plt.legend()
     plt.tight_layout()
 
     if save_plot:
-        plt.savefig(PLOTS_DIR / f"T1{name_suf}_w{OMEGA_MIN}-{OMEGA_MAX}_N{N}_tdis{t_disc}_seed{SEED}_LOSSf_{zoom}.png", dpi=300)
+        plt.savefig(folder / f"T1{name_suf}_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_LOSSf_{zoom}.png", dpi=300)
     if show_plot:
         plt.show()
 
     plt.close()
 
-def plot_val_curves_fixed_N(results, N, save_plot: bool=False, show_plot: bool=False, y_limit: float=None, zoom: str="full"):
-    """Plot Val MSE vs epoch for all t_disc, for a given N."""
+
+def plot_val_curves_fixed_N(results, N, folder=cfg.plots_dir, save_plot: bool=False, show_plot: bool=False, y_limit: float=None, zoom: str="full"):
+    '''Plot Val MSE vs epoch for all t_disc, for a given N. Only used when analyzing different number of samples N and time discretizations t_disc.
+    
+    - save_plot: if True, saves the plot to the specified folder as .png
+    - show_plot: if True, displays the plot on the screen
+    - y_limit: sets the y-axis limit for better detail
+    - zoom: defualt is 'full', when y_limit is set, recomended to set as y_limit value for recognition in filename
+
+    Saved plot name is like: 'VALcurves_N{N}_{zoom}.png'
+    '''
+
     subset = [r for r in results if r["N"] == N]
     if not subset:
         print(f"No results for N={N}")
@@ -61,7 +126,7 @@ def plot_val_curves_fixed_N(results, N, save_plot: bool=False, show_plot: bool=F
     plt.tight_layout()
 
     if save_plot:
-        plt.savefig(PLOTS_DIR / f"VALcurves_N{N}_{zoom}.png", dpi=300)
+        plt.savefig(folder / f"VALcurves_N{N}_{zoom}.png", dpi=300)
     if show_plot:
         plt.show()
 

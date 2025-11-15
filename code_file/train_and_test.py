@@ -3,12 +3,16 @@ from .imports_and_libraries import *
 
 
 def set_device():
+    '''Set device to cuda if available else cpu'''
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     #print(device.type) 
     return device
 
 @torch.no_grad()
 def evaluate(loader, model, device):
+    '''Evaluation step returning MSE and MAE'''
+
     model.eval()
     mse, mae, n = 0, 0, 0
 
@@ -24,6 +28,8 @@ def evaluate(loader, model, device):
 
 @torch.no_grad()
 def prediction_collecter_plot(loader, model, device):
+    '''Collect predictions and true values from loader just for plotting true omegas vs predicted omegas'''
+
     model.eval()
     y_true, y_pred = [], []
     
@@ -40,6 +46,8 @@ def prediction_collecter_plot(loader, model, device):
     return y_true, y_pred
 
 def split_and_load(dataset):
+    '''Splits dataset into train, validation and test parts'''
+
     #spltting to train, val and test parts
     ds_train, ds_val, ds_test = random_split(
         dataset, [0.6, 0.2, 0.2],
@@ -54,7 +62,9 @@ def split_and_load(dataset):
     return train_loader, val_loader, test_loader
 
 def train_and_eval_training(train_loader, val_loader, device, model, criterion, optimizer, scheduler, 
-                            print_update: bool=False, max_epochs: int=EPOCHS):
+                            max_epochs: int=cfg.epochs, print_update: bool=False):
+    '''Train the model and evaluate on validation. Saves best model based on validation MSE through training'''
+
     #real loop and training and everything....
     best_val = float("inf")
     best_state = None

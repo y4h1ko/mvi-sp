@@ -2,8 +2,8 @@ from .imports_and_libraries import *
 
 
 
-def set_seed(seed=SEED, seed_torch=True):
-    "Set seed for reproducibility"
+def set_seed(seed=cfg.seed, seed_torch=True):
+    '''Set seed for reproducibility for everything (random, numpy, torch). Random seed is not set here.'''
     rd.seed(seed)
     np.random.seed(seed)
 
@@ -15,9 +15,11 @@ def set_seed(seed=SEED, seed_torch=True):
         torch.backends.cudnn.deterministic = True
 
     #for now i print seed
-    #print(f'Seed: {seed}')
+    #print(f'Seed: {cfg.seed}')
 
 def from_array_to_tensor_dataset(V_np_arr: np.ndarray, tar_np_arr: np.ndarray):
+    '''Convert NumPy arrays of inputs and targets to a TensorDataset.'''
+
     #np.arrays to tensors
     X = torch.from_numpy(V_np_arr).float()
     y = torch.from_numpy(tar_np_arr).float()
@@ -25,7 +27,15 @@ def from_array_to_tensor_dataset(V_np_arr: np.ndarray, tar_np_arr: np.ndarray):
     return TensorDataset(X, y)
 
 #sine dataset generator
-def make_sine_dataset(N: int=NUM_OF_SAMPLES, t_interval: list=TIME_INTERVAL, t_k: int=DISCR_OF_TIME, w_min: float=OMEGA_MIN, w_max: float=OMEGA_MAX, seed=SEED ):
+def make_sine_dataset(N: int=cfg.num_of_samples, t_interval: list=cfg.time_interval, t_k: int=cfg.discr_of_time, w_min: float=cfg.omega_min, w_max: float=cfg.omega_max, 
+                      seed=cfg.seed, mu: float=cfg.mu, sigma: float=cfg.noise_std, noise: bool=False):
+    '''
+    Generate a dataset with N samples of sine waves sin(w*t) with frequencies w sampled uniformly from [w_min, w_max] - both limit values are included.
+    Optionally, Gaussian noise N(mu, sigma) can be added to each sample.
+
+    Returns: tuple of NumPy arrays (V, target, t_val)
+    '''
+
     rng = np.random.default_rng(seed)
 
     #evenly space time in t_k levels
@@ -37,7 +47,10 @@ def make_sine_dataset(N: int=NUM_OF_SAMPLES, t_interval: list=TIME_INTERVAL, t_k
 
     #generate N samples of sin(w*t)
     for wi in w_val:
-        Vi = 1 * np.sin(wi * t_val)
+        if noise:
+            Vi = 1 * np.sin(wi * t_val) + rng.normal(mu, sigma, size=t_k)
+        else:
+            Vi = 1 * np.sin(wi * t_val)
         V.append(np.array(Vi))
         target.append(np.array([wi]))
 
@@ -47,5 +60,5 @@ def make_sine_dataset(N: int=NUM_OF_SAMPLES, t_interval: list=TIME_INTERVAL, t_k
 
 
 
-
+make_sine_dataset(noise=True)
 
