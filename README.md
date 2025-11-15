@@ -31,7 +31,6 @@ Questions to consider:
 This repo has two remote repositories and should be completely identical, after commit run this:
 
 git push origin main
-
 git push github main
 
 

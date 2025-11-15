@@ -135,7 +135,7 @@ def print_model_sweep_table(results):
             f"-> best_epoch={r['best_epoch']:3d}, best_val={r['best_val']:.6f}, test_mse={r['test_mse']:.6f}, test_mae={r['test_mae']:.6f}")
         
 
-def run_model_config( N: int, t_disc: int, d_model: int, nhead: int, num_layers: int, dim_f: int, dropout: float = 0.1, max_epochs: int = EPOCHS,):
+def run_model_config(N: int, t_disc: int, d_model: int, nhead: int, num_layers: int, dim_f: int, dropout: float = 0.1, max_epochs: int = EPOCHS,):
     set_seed()
     device = set_device()
 
@@ -167,7 +167,7 @@ def run_model_config( N: int, t_disc: int, d_model: int, nhead: int, num_layers:
     return {"N": N, "t_disc": t_disc, "d_model": d_model, "nhead": nhead, "num_layers": num_layers, "dim_f": dim_f, "dropout": dropout, "max_epochs": max_epochs,
         "best_epoch": best_epoch, "best_val": best_val, "test_mse": test_mse, "test_mae": test_mae, "val_curve": val_mse_hist, "train_curve": train_mse_hist, }
 
-def sweep_model_hparams( N: int, t_disc: int, d_model_list: list[int], nhead_list: list[int], num_layers_list: list[int], 
+def sweep_model_hparams(N: int, t_disc: int, d_model_list: list[int], nhead_list: list[int], num_layers_list: list[int], 
                         dim_f_list: list[int], dropout: float = 0.1, max_epochs: int = EPOCHS):
     
     all_results = []
