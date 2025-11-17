@@ -44,6 +44,7 @@ class Config:
         #self.amplitude_min = 1                  #minimal value for amplitude (A)
         #self.amplitude_max = 1                  #maximal value for amplitude (A)
 
+        #mu should stay zero so there is no any shift
         self.mu = 0.0                   #mean - noise
         self.noise_std = 0.1            #standard deviation - noise
     
@@ -65,5 +66,5 @@ class Config:
 
 
 
-
+#exporting object with all configurations as object with properties
 cfg = Config()

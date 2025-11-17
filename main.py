@@ -6,7 +6,7 @@ from code_file.train_and_test import *
 from code_file.visualizations import *
 
 #main loop
-def main():
+def main(plot1: bool = False, plot2: bool = False):
     #setup for reproducibility and device
     set_seed()
     device = set_device()
@@ -16,7 +16,6 @@ def main():
     criterion = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.learning_rate, weight_decay=cfg.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs)
-
 
     #creating dataset and converting to tensor dataset
     V_np, tar_np, t_np = make_sine_dataset(noise=True)
@@ -37,10 +36,12 @@ def main():
     y_true, y_pred = prediction_collecter_plot(test_loader, model, device)
 
     #plots - save or show option
-    plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=False, show_plot=True)
-    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True)
-    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True, y_limit=0.01)
+    if plot1:
+        plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=True, show_plot=False)
+    if plot2:
+        plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True)
+        plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True, y_limit=0.025)
 
 
 
-main()
+main(plot1=True)

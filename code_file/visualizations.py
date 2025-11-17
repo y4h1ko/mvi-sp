@@ -31,7 +31,7 @@ def plot_wave_samples(t, V_clean, V_noisy, w: float=1.0, mu: float=cfg.mu, sigma
 
 
 def plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, N: int=cfg.num_of_samples, t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, 
-                      w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, save_plot: bool=False, show_plot: bool=False):
+                      w_max: float=cfg.omega_max, seed=cfg.seed, sigma: float=cfg.noise_std, folder=cfg.plots_dir, save_plot: bool=False, show_plot: bool=False):
     '''Plot predicted vs true values frequencies into scatter plot from test set.
     
     - save_plot: if True, saves the plot to the specified folder as .png
@@ -49,10 +49,10 @@ def plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, N: int=cfg.num_of_samp
     plt.grid(True, which="both")
     plt.xlabel("True w")
     plt.ylabel("Predicted w")
-    plt.title(f"Test N={N}, w=[{w_min}-{w_max}], tdis={t_disc}\nMSE={test_mse:.6f}, MAE={test_mae:.6f}")
+    plt.title(f"Test N={N}, w=[{w_min}-{w_max}], tdis={t_disc}\nMSE={test_mse:.6f}, MAE={test_mae:.6f}, std={sigma}")
     plt.tight_layout()
     if save_plot:
-        plt.savefig(folder / f"T1_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_PREDvsREAL.png", dpi=300)
+        plt.savefig(folder / f"T1_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_std{sigma}_PREDvsREAL.png", dpi=300)
     if show_plot:
         plt.show()
     
@@ -60,8 +60,8 @@ def plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, N: int=cfg.num_of_samp
 
 
 def plot_loss_curves(train_mse_hist, val_mse_hist, epochs: int=cfg.epochs, N: int=cfg.num_of_samples, t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, 
-                     w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, save_plot: bool=False, show_plot: bool=False, y_limit: float=None, zoom: str="full", 
-                     name_suf: str=""):
+                     w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, sigma: float=cfg.noise_std, save_plot: bool=False, show_plot: bool=False, 
+                     y_limit: float=None, zoom: str="full", name_suf: str=""):
     '''Plot training and validation loss curves over epochs.
     
     - save_plot: if True, saves the plot to the specified folder as .png
@@ -83,12 +83,12 @@ def plot_loss_curves(train_mse_hist, val_mse_hist, epochs: int=cfg.epochs, N: in
     plt.xlabel("Epoch")
     plt.ylabel("Loss (MSE)")
     plt.ylim(bottom=0, top=y_limit)
-    plt.title(f"Training/Validation Loss \n N={N}, w=[{w_min}-{w_max}], tdis={t_disc}")
+    plt.title(f"Training/Validation Loss \n N={N}, w=[{w_min}-{w_max}], tdis={t_disc}, std{sigma}")
     plt.legend()
     plt.tight_layout()
 
     if save_plot:
-        plt.savefig(folder / f"T1{name_suf}_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_LOSSf_{zoom}.png", dpi=300)
+        plt.savefig(folder / f"T1{name_suf}_std{sigma}_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_LOSSf_{zoom}.png", dpi=300)
     if show_plot:
         plt.show()
 
