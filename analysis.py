@@ -229,7 +229,9 @@ def sweep_model_hparams(N: int, t_disc: int, d_model_list: list[int], nhead_list
 
     return all_results
 
-
+def tell_me_model_params(model=TransformerModel1()):
+    total_params = sum(p.numel() for p in model.parameters())
+    print(f"Total parameters in {model}: {total_params}")
 
 
 def main1(epoch_list: list[int]):
@@ -285,6 +287,16 @@ def main4(save: bool=False, show: bool=False):
 
     plot_wave_samples(t=t, V_clean=V_clean[0], V_noisy=V_noisy[0], save_plot=save, show_plot=show)
 
+def main5():
+    '''Plot multi axis parallel plot - used for hyperparam ploting'''
+    
+    plot_parallel_hparams(csv_path="plots/rep04-different-model-hyperparameters/T1_hyperprams.csv", renderer='browser', show=False, 
+                      save_path="plots/rep05-something-small/parallel_all.html")
+
+    plot_parallel_hparams(csv_path="plots/rep04-different-model-hyperparameters/T1_hyperprams.csv", top_k=8, renderer='browser', show=False, 
+                      save_path="plots/rep05-something-small/parallel_top8_zoomed.html")
+
+
 #with this i tried to find optimal epoch number
 #diff_epoch = [20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 225, 250, 275, 300, 350, 400]
 #main1(diff_epoch)
@@ -303,6 +315,9 @@ def main4(save: bool=False, show: bool=False):
 #just to show wave
 #main4(show=True)
 
+#how many trainable parameters has the model...
+#tell_me_model_params(model=TransformerModel1(d_model=256, nhead=8, num_layers=1, dim_f=256))
+#tell_me_model_params(model=TransformerModel1(d_model=64, nhead=2, num_layers=2, dim_f=64))
 
-
-
+#to plot hyperparameters at once
+#main5()

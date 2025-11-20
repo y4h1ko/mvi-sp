@@ -133,4 +133,57 @@ def plot_val_curves_fixed_N(results, N, folder=cfg.plots_dir, save_plot: bool=Fa
     plt.close()
 
 
+def plot_parallel_hparams( csv_path: str, top_k: int | None = None, renderer: str = "browser",
+    dims: list[str] | None = None, color_col: str = "best_val", title_prefix: str = "Parallel coordinates", show: bool = False, save_path: str | None = None):
+    """
+    Plot parallel coordinates for transformer hyperparameter search.
 
+    Parameters
+    ----------
+    csv_path : str -Ppth to CSV file with reuslts.
+    top_k : int or None -None use ALL rows. -int use n rows with smallest best_val.
+    rescale_to_subset : bool
+        If True  -> colour scale and axis range use only the subset (top_k).
+        If False -> colour scale and axis range use the FULL dataset.
+    
+    dims : list[str] or None
+        List of columns to use as axes. If None, defaults to:
+        ['d_model', 'nhead', 'num_layers', 'dim_f', color_col]
+        
+    title_prefix : str -Text at beginning of figure title.
+    """
+
+    pio.renderers.default = renderer
+
+    df = pd.read_csv(csv_path)
+
+    if dims is None:
+        dims = ["d_model", "nhead", "num_layers", "dim_f", color_col]
+
+    # choose subset
+    if top_k is None:
+        subset = df
+        suffix = "ALL models"
+    else:
+        subset = df.nsmallest(top_k, color_col)
+        suffix = f"TOP {top_k} models (lowest {color_col})"
+
+    # global range for colour/axis
+    global_min = df[color_col].min()
+    global_max = df[color_col].max()
+
+    cmin = subset[color_col].min()
+    cmax = subset[color_col].max()
+
+    fig = px.parallel_coordinates(subset[dims], dimensions=dims, color=color_col, color_continuous_scale="Viridis", range_color=(cmax, cmin))
+
+    fig.update_layout(title=f"{title_prefix} – {suffix}", width=1800, height=900)
+
+    if save_path is not None:
+        if save_path.lower().endswith(".html"):
+            fig.write_html(save_path)
+        else:
+            fig.write_image(save_path, width=1800, height=900, scale=2.0)
+
+    if show:
+        fig.show()

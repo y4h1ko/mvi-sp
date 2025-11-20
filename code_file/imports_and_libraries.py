@@ -6,6 +6,13 @@ import torch
 import torch.nn as nn
 import csv
 from torch.utils.data import TensorDataset, DataLoader, random_split
+from nflows import flows, transforms, distributions
+
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
+
 
 #custom import
 from .configuration import cfg
