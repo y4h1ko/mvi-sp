@@ -92,7 +92,7 @@ def train_and_eval_training(train_loader, val_loader, device, model, criterion, 
         val_mse_hist.append(val_mse)
 
         #validation steo
-        val_mse, val_mae = evaluate(val_loader, model, device)
+
         if val_mse < best_val:
             best_val = val_mse
             best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
@@ -106,3 +106,60 @@ def train_and_eval_training(train_loader, val_loader, device, model, criterion, 
     model.load_state_dict(best_state)
 
     return model, train_mse_hist, val_mse_hist
+
+
+
+
+def train_and_eval_training_flow(train_loader, val_loader, device, model, optimizer, scheduler, 
+                            max_epochs: int=cfg.epochs, print_update: bool=False):
+    '''Train the model and evaluate on validation. Saves best model based on validation MSE through training but with NLL loss function'''
+
+    #real loop and training and everything....
+    best_val = float("inf")
+    best_state = None
+
+    train_mse_hist, val_mse_hist = [], []
+
+    for epoch in range(1, max_epochs + 1):
+        model.train()
+        
+        #training step
+        for xb, yb in train_loader:
+            xb, yb = xb.to(device), yb.to(device)
+
+            #NLL loss function
+            log_p = model.log_prob(xb, yb)
+            loss = -log_p.mean()
+            optimizer.zero_grad()
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            optimizer.step()
+
+        scheduler.step()
+
+        tr_mse, tr_mae = evaluate(train_loader, model, device)
+        val_mse, val_mae = evaluate(val_loader, model, device)
+
+        train_mse_hist.append(tr_mse)
+        val_mse_hist.append(val_mse)
+
+        #validation steo
+        if val_mse < best_val:
+            best_val = val_mse
+            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+
+        if print_update:
+            if epoch % 10 == 0:
+                tr_mse, tr_mae = evaluate(train_loader, model, device)
+                print(f"Epoch {epoch:3d}; Train MSE {tr_mse:.6f}, MAE {tr_mae:.6f}; Val MSE {val_mse:.6f}, MAE {val_mae:.6f}")
+
+    #load the best weights
+    model.load_state_dict(best_state)
+
+    return model, train_mse_hist, val_mse_hist
+
+
+
+
+
+

@@ -25,7 +25,7 @@ This is the GLOBAL configuration file where all hyperparameters and paths are se
 '''
 
 
-PLOTS_DIR = Path("plots/rep04-different-model-hyperparameters")
+PLOTS_DIR = Path("plots/rep05-something-small")
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 CSV_PATH = PLOTS_DIR / "T1_hyperprams.csv"
 
