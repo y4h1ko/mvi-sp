@@ -233,6 +233,19 @@ def tell_me_model_params(model=TransformerModel1()):
     total_params = sum(p.numel() for p in model.parameters())
     print(f"Total parameters in {model}: {total_params}")
 
+def tell_model_size(model=TransformerModel1()):
+    
+    param_size = 0
+    buffer_size = 0
+    for param in model.parameters():
+        param_size += param.nelement() * param.element_size()
+
+    for buffer in model.buffers():
+        buffer_size += buffer.nelement() * buffer.element_size()
+
+    size_all_mb = (param_size + buffer_size) / 1024**2
+    print('Size: {:.3f} MB'.format(size_all_mb))
+
 
 def main1(epoch_list: list[int]):
     '''Run epoch sweep analysis with given epoch list.'''
@@ -321,3 +334,6 @@ def main5():
 
 #to plot hyperparameters at once
 #main5()
+
+
+
