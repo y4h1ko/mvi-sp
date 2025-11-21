@@ -75,12 +75,12 @@ def main2():
     y_true, y_pred = prediction_collecter_plot(test_loader, model, device)
 
     #plots - save or show option
-    plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=True, show_plot=True)
-    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=True, show_plot=True)
-    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=True, show_plot=True, y_limit=0.025, zoom='0.025')
+    plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=False, show_plot=True)
+    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True)
+    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True, y_limit=0.025, zoom='0.025')
 
 
 
 
 #main1()
-main2()
+#main2()

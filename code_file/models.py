@@ -51,10 +51,11 @@ class HeadWithFlow1(nn.Module):
         for _ in range(num_layers):
             transform_list.append(transforms.MaskedAffineAutoregressiveTransform(features=1, hidden_features=hidden_features, context_features=hidden_features))
 
+        #chaining transformation sequence
         transform = transforms.CompositeTransform(transform_list)
 
+        #wraps flow as object and keeps theinformation
         base_dist = distributions.StandardNormal(shape=[1])
-
         self.flow = flows.Flow(transform=transform, distribution=base_dist)
 
     def encode_context_head(self, context):
@@ -67,13 +68,11 @@ class HeadWithFlow1(nn.Module):
         return log_p
 
     def sample(self, context, num_samples: int):
-        
+        #function gives out mean, uncertainity and shape of distribution
         ctx = self.encode_context_head(context)  
-       
+    
         samples_bs1 = self.flow.sample(num_samples=num_samples, context=ctx)
-
         samples = samples_bs1.permute(1, 0, 2) 
-
         return samples
 
 
