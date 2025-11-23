@@ -43,10 +43,9 @@ class HeadWithFlow1(nn.Module):
         self.context_dim  = context_dim
         self.hidden_features = hidden_features
         self.num_layers = num_layers
-
         self.context_net = nn.Linear(context_dim, hidden_features)
 
-        #MAF
+        #MAF - creating matrixes which will transform distribution
         transform_list = []
         for _ in range(num_layers):
             transform_list.append(transforms.MaskedAffineAutoregressiveTransform(features=1, hidden_features=hidden_features, context_features=hidden_features))
@@ -54,7 +53,7 @@ class HeadWithFlow1(nn.Module):
         #chaining transformation sequence
         transform = transforms.CompositeTransform(transform_list)
 
-        #wraps flow as object and keeps theinformation
+        #wraps flow as object and keeps the information
         base_dist = distributions.StandardNormal(shape=[1])
         self.flow = flows.Flow(transform=transform, distribution=base_dist)
 

@@ -336,4 +336,4 @@ def main5():
 #main5()
 
 
-
+#analyze_flow_distributions(TransformerModel2(), num_flow_samples=1000, noise=True, show_plots=True)

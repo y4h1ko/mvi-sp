@@ -187,3 +187,166 @@ def plot_parallel_hparams( csv_path: str, top_k: int | None = None, renderer: st
 
     if show:
         fig.show()
+
+
+@torch.no_grad()
+def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_samples_per_x: int=10, bins: int=40, save_plot: bool=False, show_plot: bool=False):
+    """
+    Histogram of:
+      - dataset targets ω (all y from loader)
+      - model samples ω ~ p(ω | x) from the flow head
+
+    This uses model.sample(...) → **learned ω distribution**, NOT latent z.
+    """
+    model.eval()
+
+    all_targets = []
+    all_model_samples = []
+
+    for xb, yb in loader:
+        xb = xb.to(device)
+        yb = yb.to(device)
+
+        # true ω
+        all_targets.append(yb.squeeze(-1).cpu().numpy())   # [B]
+
+        # learned distribution p(ω | x): sample ω from flow head
+        samples = model.sample(xb, num_samples=num_samples_per_x)  # [B, S, 1]
+        samples = samples.squeeze(-1).cpu().numpy().reshape(-1)    # flatten to [B*S]
+        all_model_samples.append(samples)
+
+    targets = np.concatenate(all_targets)
+    flow_samples = np.concatenate(all_model_samples)
+
+    plt.figure(figsize=(8, 5))
+    plt.minorticks_on()
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+
+    plt.hist(
+        targets,
+        bins=bins,
+        density=True,
+        alpha=0.7,
+        label="dataset ω (targets)",
+    )
+
+    plt.hist(
+        flow_samples,
+        bins=bins,
+        density=True,
+        alpha=0.7,
+        label="flow samples ω (model)",
+    )
+
+    plt.xlabel("ω")
+    plt.ylabel("density")
+    plt.title("Dataset vs learned ω distribution (flow head)")
+    plt.legend()
+    plt.tight_layout()
+
+    if save_plot:
+        path = cfg.plots_dir / "dataset_vs_learned_marginal_flow.png"
+        plt.savefig(path, dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close()
+
+
+@torch.no_grad()
+def plot_flow_posterior_one_example(model: nn.Module, device, loader, index_in_batch: int=0, num_samples: int=500, bins: int=40, save_plot: bool=False, show_plot: bool=False):
+    """
+    Take one x from the first batch, sample ω ~ p(ω | x) many times,
+    and plot the learned 1D conditional with the true ω marked.
+    """
+    model.eval()
+
+    xb, yb = next(iter(loader))
+    xb = xb.to(device)
+    yb = yb.to(device)
+
+    x_one = xb[index_in_batch : index_in_batch + 1]
+    w_true = yb[index_in_batch].item()
+
+    samples = model.sample(x_one, num_samples=num_samples)
+    samples = samples.squeeze().cpu().numpy()
+
+    plt.figure(figsize=(7, 4))
+    plt.minorticks_on()
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+
+    plt.hist(samples, bins=bins, density=True, alpha=0.8, label="flow samples ω | x")
+    plt.axvline(w_true, linestyle="--", linewidth=2, label=f"true ω = {w_true:.3f}")
+
+    plt.xlabel("ω")
+    plt.ylabel("density")
+    plt.title("Learned conditional p(ω | x) for one example")
+    plt.legend()
+    plt.tight_layout()
+
+    if save_plot:
+        path = cfg.plots_dir / "flow_posterior_one_example.png"
+        plt.savefig(path, dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close()
+
+
+@torch.no_grad()
+def plot_uncertainty_vs_error( model: nn.Module, device, loader, num_samples: int=200, save_plot: bool=False, show_plot: bool=False,):
+    """
+    For each example:
+      - draw many ω samples from p(ω | x)
+      - compute predictive mean and std
+      - compute |mean - true ω|
+    Then scatter: std (x-axis) vs error (y-axis).
+    """
+    model.eval()
+
+    all_std = []
+    all_err = []
+
+    for xb, yb in loader:
+        xb = xb.to(device)
+        yb = yb.to(device)
+
+        samples = model.sample(xb, num_samples=num_samples)
+
+        if samples.dim() == 3 and samples.shape[0] == num_samples:
+            samples = samples.permute(1, 0, 2)
+
+        samples = samples.squeeze(-1)
+
+        mean_w = samples.mean(dim=1)
+        std_w  = samples.std(dim=1)
+        true_w = yb.squeeze(-1)
+
+        err = (mean_w - true_w).abs()
+
+        all_std.append(std_w.cpu().numpy())
+        all_err.append(err.cpu().numpy())
+
+    all_std = np.concatenate(all_std)
+    all_err = np.concatenate(all_err)
+
+    plt.figure(figsize=(6, 6))
+    plt.minorticks_on()
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+
+    plt.scatter(all_std, all_err, s=12, alpha=0.6)
+    plt.xlabel("predictive std(w)")
+    plt.ylabel("abs(mean(w) - true w)")
+    plt.title("Uncertainty vs absolute error")
+    plt.tight_layout()
+
+    if save_plot:
+        path = cfg.plots_dir / "uncertainty_vs_error_flow.png"
+        plt.savefig(path, dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close()

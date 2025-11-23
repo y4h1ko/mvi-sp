@@ -55,11 +55,9 @@ def main2():
     optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.learning_rate, weight_decay=cfg.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs)
 
-
     #creating dataset and converting to tensor dataset
     V_np, tar_np, t_np = make_sine_dataset(noise=True)
     ds_full = from_array_to_tensor_dataset(V_np, tar_np)
-
 
     #splitting to train, val and test parts
     train_loader, val_loader, test_loader = split_and_load(ds_full)
@@ -80,6 +78,9 @@ def main2():
     plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True, y_limit=0.025, zoom='0.025')
 
 
+    plot_dataset_vs_learned_marginal(model, device, test_loader, num_samples_per_x=50, bins=40, save_plot=False, show_plot=True)
+    plot_flow_posterior_one_example(model, device, test_loader, index_in_batch=0, num_samples=500, bins=40, save_plot=False,  show_plot=True)
+    plot_uncertainty_vs_error(model, device, test_loader, num_samples=200, save_plot=False, show_plot=True)
 
 
 #main1()
