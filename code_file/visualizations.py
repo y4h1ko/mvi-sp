@@ -52,7 +52,7 @@ def plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, N: int=cfg.num_of_samp
     plt.title(f"Test N={N}, w=[{w_min}-{w_max}], tdis={t_disc}\nMSE={test_mse:.6f}, MAE={test_mae:.6f}, std={sigma}")
     plt.tight_layout()
     if save_plot:
-        plt.savefig(folder / f"T1_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_std{sigma}_PREDvsREAL.png", dpi=300)
+        plt.savefig(folder / f"T2_N{N}_tdis{t_disc}_w{w_min}-{w_max}_seed{seed}_std{sigma}_PREDvsREAL.png", dpi=300)
     if show_plot:
         plt.show()
     
@@ -88,7 +88,7 @@ def plot_loss_curves(train_mse_hist, val_mse_hist, epochs: int=cfg.epochs, N: in
     plt.tight_layout()
 
     if save_plot:
-        plt.savefig(folder / f"T1{name_suf}_std{sigma}_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_LOSSf_{zoom}.png", dpi=300)
+        plt.savefig(folder / f"T2{name_suf}_N{N}_tdis{t_disc}_std{sigma}_w{w_min}-{w_max}_seed{seed}_LOSSf_{zoom}.png", dpi=300)
     if show_plot:
         plt.show()
 
@@ -190,7 +190,10 @@ def plot_parallel_hparams( csv_path: str, top_k: int | None = None, renderer: st
 
 
 @torch.no_grad()
-def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_samples_per_x: int=10, bins: int=40, save_plot: bool=False, show_plot: bool=False):
+def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_samples_per_x: int=100, bins: int=50, N: int=cfg.num_of_samples, 
+                    t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, 
+                    sigma: float=cfg.noise_std, fl_hid_feat: int=cfg.flow_hidden_features, fl_lay: int=cfg.flow_num_layers,
+                    save_plot: bool=False, show_plot: bool=False):
     """
     Histogram of:
       - dataset targets ω (all y from loader)
@@ -207,12 +210,10 @@ def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_sampl
         xb = xb.to(device)
         yb = yb.to(device)
 
-        # true ω
-        all_targets.append(yb.squeeze(-1).cpu().numpy())   # [B]
+        all_targets.append(yb.squeeze(-1).cpu().numpy())
 
-        # learned distribution p(ω | x): sample ω from flow head
-        samples = model.sample(xb, num_samples=num_samples_per_x)  # [B, S, 1]
-        samples = samples.squeeze(-1).cpu().numpy().reshape(-1)    # flatten to [B*S]
+        samples = model.sample(xb, num_samples=num_samples_per_x)
+        samples = samples.squeeze(-1).cpu().numpy().reshape(-1)
         all_model_samples.append(samples)
 
     targets = np.concatenate(all_targets)
@@ -222,21 +223,8 @@ def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_sampl
     plt.minorticks_on()
     plt.grid(True, which="both", linestyle="--", linewidth=0.5)
 
-    plt.hist(
-        targets,
-        bins=bins,
-        density=True,
-        alpha=0.7,
-        label="dataset ω (targets)",
-    )
-
-    plt.hist(
-        flow_samples,
-        bins=bins,
-        density=True,
-        alpha=0.7,
-        label="flow samples ω (model)",
-    )
+    plt.hist( targets, bins=bins, density=True, alpha=0.7, label="dataset ω (targets)")
+    plt.hist(flow_samples, bins=bins, density=True, alpha=0.7, label="flow samples ω (model)")
 
     plt.xlabel("ω")
     plt.ylabel("density")
@@ -245,7 +233,7 @@ def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_sampl
     plt.tight_layout()
 
     if save_plot:
-        path = cfg.plots_dir / "dataset_vs_learned_marginal_flow.png"
+        path = cfg.plots_dir / f"dataset_vs_learned_marginal_flow_T2_flowHidFeat{fl_hid_feat}_flowLay{fl_lay}_N{N}_tdis{t_disc}_std{sigma}_w{w_min}-{w_max}_seed{seed}.png"
         plt.savefig(path, dpi=300)
 
     if show_plot:
@@ -255,38 +243,138 @@ def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_sampl
 
 
 @torch.no_grad()
-def plot_flow_posterior_one_example(model: nn.Module, device, loader, index_in_batch: int=0, num_samples: int=500, bins: int=40, save_plot: bool=False, show_plot: bool=False):
+def plot_flow_posterior_one_example(model: nn.Module, device, loader, global_index: int=0, num_samples: int=100000, bins: int=100, num_sigmas: int=3, 
+                    N: int=cfg.num_of_samples, t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, w_max: float=cfg.omega_max, 
+                    seed=cfg.seed, folder=cfg.plots_dir, fl_hid_feat: int=cfg.flow_hidden_features,
+                    fl_lay: int=cfg.flow_num_layers, save_plot: bool=False, show_plot: bool=False):
     """
     Take one x from the first batch, sample ω ~ p(ω | x) many times,
     and plot the learned 1D conditional with the true ω marked.
     """
     model.eval()
 
-    xb, yb = next(iter(loader))
-    xb = xb.to(device)
-    yb = yb.to(device)
+    start = 0
+    for xb, yb in loader:
+        batch_size = xb.size(0)
+        end = start + batch_size
+        if global_index < end:
+            local_idx = global_index - start
 
-    x_one = xb[index_in_batch : index_in_batch + 1]
-    w_true = yb[index_in_batch].item()
+            xb = xb.to(device)
+            yb = yb.to(device)
+
+            x_one = xb[local_idx : local_idx + 1]
+            w_true = yb[local_idx].item()
+            break
+
+        start = end
+    else:
+        raise IndexError(f"global_index {global_index} out of range")
 
     samples = model.sample(x_one, num_samples=num_samples)
     samples = samples.squeeze().cpu().numpy()
 
-    plt.figure(figsize=(7, 4))
+    mu = samples.mean()
+    sigma = samples.std()
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.minorticks_on()
+    ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+
+    ax.hist(samples, bins=bins, density=True, color="tab:blue", alpha=0.8, label="flow samples ω | x")
+    ax.axvline(w_true, color="tab:orange", linestyle="--", linewidth=2, label=f"true ω = {w_true:.3f}")
+    ax.axvline(mu, color="tab:red", linestyle="-", linewidth=2, label=f"mean μ = {mu:.3f}")
+
+
+    ax.set_xlim(mu - 0.15, mu + 0.15)
+    ax.set_xlabel("ω")
+    ax.set_ylabel("'Samples'")
+    ax.set_title("Probability for one example of ω")
+
+    sigma_label_added = False
+    for k in range(1, num_sigmas + 1):
+        left  = mu - k * sigma
+        right = mu + k * sigma
+
+        label_sigma = r"±kσ lines" if not sigma_label_added else None
+        sigma_label_added = True
+
+        ax.axvline(left,  linestyle="-.", linewidth=1.8, color="tab:brown", alpha=0.7, label=label_sigma)
+        ax.axvline(right, linestyle="-.", linewidth=1.8, color="tab:brown", alpha=0.7)
+
+    ks = [x for x in range(-num_sigmas, num_sigmas + 1, 1)]
+    tick_positions = [mu + k * sigma for k in ks]
+    tick_labels = []
+    
+    for k in ks:
+        if k == 0:
+            tick_labels.append(r"μ")
+        elif k < 0:
+            tick_labels.append(rf"{k}σ")
+        else:
+            tick_labels.append(rf"+{k}σ")
+
+    ax2 = ax.twiny()
+    ax2.set_xlim(ax.get_xlim())
+    ax2.set_xticks(tick_positions)
+    ax2.set_xticklabels(tick_labels)
+    ax2.tick_params(axis="x", labelsize=8, pad=2)
+
+    ax.legend()
+    fig.tight_layout()
+
+    if save_plot:
+        path = cfg.plots_dir / f"Probab_density_T2_flowHidFeat{fl_hid_feat}_flowLay{fl_lay}_N{N}_tdis{t_disc}_std{sigma}_w{w_min}-{w_max}_seed{seed}.png"
+        plt.savefig(path, dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close()
+
+
+def plot_error_vs_true_omega(y_true, y_pred, smooth_window_frac: float = 0.075, N: int=cfg.num_of_samples, t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, 
+                    w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, sigma: float=cfg.noise_std, fl_hid_feat: int=cfg.flow_hidden_features,
+                    fl_lay: int=cfg.flow_num_layers, save_plot: bool = False, show_plot: bool = False):
+    """
+    x-axis: true ω
+    y-axis: |pred - true|  (absolute error)
+
+    - blue scatter: all samples
+    - black smooth curve: average error as a function of true ω.
+    """
+    y_true = np.asarray(y_true).flatten()
+    y_pred = np.asarray(y_pred).flatten()
+    err = np.abs(y_pred - y_true)
+
+    sort_idx = np.argsort(y_true)
+    y_true_sorted = y_true[sort_idx]
+    err_sorted = err[sort_idx]
+
+    n = len(y_true_sorted)
+    window = max(5, int(smooth_window_frac * n))
+    if window % 2 == 0:
+        window += 1
+
+    kernel = np.ones(window) / window
+    x_smooth = np.convolve(y_true_sorted, kernel, mode="valid")
+    err_smooth = np.convolve(err_sorted, kernel, mode="valid")
+
+    plt.figure(figsize=(6, 5))
     plt.minorticks_on()
     plt.grid(True, which="both", linestyle="--", linewidth=0.5)
 
-    plt.hist(samples, bins=bins, density=True, alpha=0.8, label="flow samples ω | x")
-    plt.axvline(w_true, linestyle="--", linewidth=2, label=f"true ω = {w_true:.3f}")
+    plt.scatter(y_true, err, s=12, alpha=0.4, label="single samples")
+    plt.plot(x_smooth, err_smooth, "k-", linewidth=2.0, label="average |error|")
 
-    plt.xlabel("ω")
-    plt.ylabel("density")
-    plt.title("Learned conditional p(ω | x) for one example")
+    plt.xlabel("Omega ω")
+    plt.ylabel("|predicted ω - true ω|")
+    plt.title("Error vs true ω")
     plt.legend()
     plt.tight_layout()
 
     if save_plot:
-        path = cfg.plots_dir / "flow_posterior_one_example.png"
+        path = cfg.plots_dir / f"T2_error_vs_true_omega__T2_flowHidFeat{fl_hid_feat}_flowLay{fl_lay}_N{N}_tdis{t_disc}_std{sigma}_w{w_min}-{w_max}_seed{seed}.png"
         plt.savefig(path, dpi=300)
 
     if show_plot:
@@ -296,8 +384,10 @@ def plot_flow_posterior_one_example(model: nn.Module, device, loader, index_in_b
 
 
 @torch.no_grad()
-def plot_uncertainty_vs_error( model: nn.Module, device, loader, num_samples: int=200, save_plot: bool=False, show_plot: bool=False,):
+def plot_uncertainty_vs_error(model: nn.Module, device, loader, num_samples: int=100, save_plot: bool=False, show_plot: bool=False,):
     """
+    !! DEPRICATED !!
+
     For each example:
       - draw many ω samples from p(ω | x)
       - compute predictive mean and std
