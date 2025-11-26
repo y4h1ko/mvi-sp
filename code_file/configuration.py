@@ -25,9 +25,9 @@ This is the GLOBAL configuration file where all hyperparameters and paths are se
 '''
 
 
-PLOTS_DIR = Path("plots/rep05-something-small")
+PLOTS_DIR = Path("plots/rep06-probability")
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
-CSV_PATH = PLOTS_DIR / "T1_hyperprams.csv"
+CSV_PATH = PLOTS_DIR / "T2_hyperprams_diff_N_and_tdis.csv"
 
 
 class Config:
@@ -58,6 +58,10 @@ class Config:
         self.learning_rate = 3e-3         #learning rate
         self.weight_decay = 1e-4          #weight decay for optimizer
 
+
+        #flowhead params
+        self.flow_hidden_features=128        #number of features layers in head with flow
+        self.flow_num_layers=4              #number of layers in head with flow
 
 
         self.plots_dir = PLOTS_DIR
