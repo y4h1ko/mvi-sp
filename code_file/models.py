@@ -37,7 +37,7 @@ class TransformerModel1(nn.Module):
 class HeadWithFlow1(nn.Module):
     '''Normalizing flow head for omega.'''
 
-    def __init__(self, context_dim: int, hidden_features: int = 32, num_layers: int = 2):
+    def __init__(self, context_dim: int, hidden_features: int=cfg.flow_hidden_features, num_layers: int=cfg.flow_num_layers):
         super().__init__()
 
         self.context_dim  = context_dim
@@ -77,14 +77,13 @@ class HeadWithFlow1(nn.Module):
 
 
 class TransformerModel2(nn.Module):
-    #rename and rewrite text
     '''Normalizing-flow head.
         - forward(x) returns the mean of samples
         - log_prob(x, y) for training with NLL
         - sample(x, S) for uncertainty (S samples)'''
 
-    def __init__(self, seq_len: int = cfg.discr_of_time, d_model: int = cfg.dmodel, nhead: int = cfg.nhead, num_layers: int = cfg.num_layers,
-                 dim_f: int = cfg.dim_f, dropout: float = cfg.dropout, flow_hidden_features: int = 32, flow_num_layers: int = 2):
+    def __init__(self, seq_len: int=cfg.discr_of_time, d_model: int=cfg.dmodel, nhead: int=cfg.nhead, num_layers: int=cfg.num_layers,
+                 dim_f: int=cfg.dim_f, dropout: float=cfg.dropout, flow_hidden_features: int=cfg.flow_hidden_features, flow_num_layers: int=cfg.flow_num_layers):
 
         super().__init__()
 
@@ -125,7 +124,7 @@ class TransformerModel2(nn.Module):
         z = self.transformer_encoder(src)
 
         pool = z.mean(dim=1)
-        head_norm = self.pre_head_norm(pool)                # [batch, d_model]
+        head_norm = self.pre_head_norm(pool)
         
         log_p = self.flow_head.log_prob(target, context=head_norm)
         return log_p
