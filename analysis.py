@@ -310,6 +310,98 @@ def main5():
                       save_path="plots/rep05-something-small/parallel_top8_zoomed.html")
 
 
+def main6():
+    '''used to tune flow hyperparameters... but '''
+    dmodel_list = [64]
+    nhead_list = [2] 
+    num_of_layers_list = [2]
+    dim_forward_list = [64]
+    flow_hid_features_list = [16, 32, 64, 128, 256, 512]
+    flow_layers_list = [1, 2, 3, 4, 5, 6, 8]
+    results = []
+
+    for a in dmodel_list:
+        for b in nhead_list:
+            for c in num_of_layers_list:
+                for d in dim_forward_list:
+                    for e in flow_hid_features_list:
+                        for f in flow_layers_list:
+                            set_seed()
+                            device = set_device()
+                            V_np, tar_np, t_np = make_sine_dataset(noise=True)
+                            ds_full = from_array_to_tensor_dataset(V_np, tar_np)
+                            train_loader, val_loader, test_loader = split_and_load(ds_full)
+
+                            model = TransformerModel2(d_model=a, nhead=b, num_layers=c, dim_f=d, flow_hidden_features=e, flow_num_layers=f).to(device)
+                            optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.learning_rate, weight_decay=cfg.weight_decay)
+                            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs)
+
+                            model, train_mse_hist, val_mse_hist = train_and_eval_training_flow(train_loader, val_loader, device, model, optimizer, scheduler)
+
+                            test_mse, test_mae = evaluate(test_loader, model, device)
+                            
+                            print(f'Hyperparams: d_model: {a}, nhead: {b}, num_layers: {c}, dim_f: {d},' + 
+                                  f'low_hidden: {e}, flow_layers: {f}, best_val_mse: {min(val_mse_hist)}, test_mse: {test_mse}, test_mae: {test_mae}')
+
+                            results.append({"d_model": a, "nhead": b, "num_layers": c, "dim_f": d,
+                                "flow_hidden": e, "flow_layers": f, "best_val_mse": min(val_mse_hist),
+                                "test_mse": float(test_mse), "test_mae": float(test_mae) })
+
+    df = pd.DataFrame(results)
+    df.to_csv(cfg.csv_path, index=False)
+    print(f"\nSaved grid search results to {cfg.csv_path}")
+
+def main7():
+    N_samples_list = [1000, 10000]
+    t_disc_list = [100, 300, 500]
+
+    a, b, c, d, e, f = 64, 2, 2, 64, 128, 4
+
+    results = []
+
+    for N in N_samples_list:
+        for t_disc in t_disc_list:
+
+            set_seed()
+            device = set_device()
+            V_np, tar_np, t_np = make_sine_dataset(N=N, t_k=t_disc, noise=True)
+            ds_full = from_array_to_tensor_dataset(V_np, tar_np)
+            train_loader, val_loader, test_loader = split_and_load(ds_full)
+
+            model = TransformerModel2(seq_len=t_disc, d_model=a, nhead=b, num_layers=c, dim_f=d, flow_hidden_features=e, flow_num_layers=f).to(device)
+            optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.learning_rate, weight_decay=cfg.weight_decay)
+            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs)
+
+            model, train_mse_hist, val_mse_hist = train_and_eval_training_flow(train_loader, val_loader, device, model, optimizer, scheduler)
+
+            test_mse, test_mae = evaluate(test_loader, model, device)
+
+            y_true, y_pred = prediction_collecter_plot(test_loader, model, device)
+            
+            print(f'Hyperparams: num_of_samples: {N}, t_disc: {t_disc}, d_model: {a}, nhead: {b}, num_layers: {c}, dim_f: {d},' + 
+                    f'low_hidden: {e}, flow_layers: {f}, best_val_mse: {float(min(val_mse_hist))}, test_mse: {test_mse}, test_mae: {test_mae}')
+
+            results.append({"d_model": a, "nhead": b, "num_layers": c, "dim_f": d,
+                        "flow_hidden": e, "flow_layers": f, "num_of_samples": N, "t_disc": t_disc, 
+                        "best_val_mse": float(min(val_mse_hist)), "test_mse": float(test_mse), "test_mae": float(test_mae) })
+            
+            #plots - save or show option
+            plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, N=N, t_disc=t_disc, save_plot=True, show_plot=False)
+            plot_loss_curves(train_mse_hist, val_mse_hist, N=N, t_disc=t_disc, save_plot=True, show_plot=False)
+            plot_loss_curves(train_mse_hist, val_mse_hist, N=N, t_disc=t_disc, save_plot=True, show_plot=False, y_limit=0.025, zoom='0.025')
+
+            plot_dataset_vs_learned_marginal(model, device, test_loader, N=N, t_disc=t_disc, save_plot=True, show_plot=False)
+
+            for idx in range(0, int(0.2*N), int(0.0125*N)):
+                plot_flow_posterior_one_example(model, device, test_loader, global_index=idx, N=N, t_disc=t_disc, save_plot=True, show_plot=False)
+            
+            plot_error_vs_true_omega(y_true, y_pred, N=N, t_disc=t_disc, save_plot=True, show_plot=False)
+
+
+    df = pd.DataFrame(results)
+    df.to_csv(cfg.csv_path, index=False)
+    print(f"\nSaved grid search results to {cfg.csv_path}")
+
 #with this i tried to find optimal epoch number
 #diff_epoch = [20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 225, 250, 275, 300, 350, 400]
 #main1(diff_epoch)
@@ -335,5 +427,10 @@ def main5():
 #to plot hyperparameters at once
 #main5()
 
-
 #analyze_flow_distributions(TransformerModel2(), num_flow_samples=1000, noise=True, show_plots=True)
+
+#searching across hyperparameters in T2
+#main6()
+
+#fine-tunned T2 with different N and t_disc → searching pattern in bigger/smaller omegas
+#main7()
