@@ -73,15 +73,20 @@ def main2():
     y_true, y_pred = prediction_collecter_plot(test_loader, model, device)
 
     #plots - save or show option
-    plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=False, show_plot=True)
-    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True)
-    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True, y_limit=0.025, zoom='0.025')
+    plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=False, show_plot=False)
+    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=False)
+    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=False, y_limit=0.025, zoom='0.025')
 
 
-    plot_dataset_vs_learned_marginal(model, device, test_loader, num_samples_per_x=50, bins=40, save_plot=False, show_plot=True)
-    plot_flow_posterior_one_example(model, device, test_loader, index_in_batch=0, num_samples=500, bins=40, save_plot=False,  show_plot=True)
-    plot_uncertainty_vs_error(model, device, test_loader, num_samples=200, save_plot=False, show_plot=True)
+    plot_dataset_vs_learned_marginal(model, device, test_loader, save_plot=False, show_plot=False)
+    # plot_flow_posterior_one_example(model, device, test_loader, index_in_batch=1, num_samples=1000, bins=100, save_plot=False,  show_plot=True)
+    # plot_uncertainty_vs_error(model, device, test_loader, num_samples=1000, save_plot=False, show_plot=True)
 
+    #idx from [0, len(batch)]
+    for idx in range(0, 200, 25):
+        plot_flow_posterior_one_example(model, device, test_loader, global_index=idx, show_plot=True)
+
+    plot_error_vs_true_omega(y_true, y_pred, save_plot=False, show_plot=True)
 
 #main1()
 #main2()
