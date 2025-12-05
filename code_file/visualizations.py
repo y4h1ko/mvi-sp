@@ -440,3 +440,50 @@ def plot_uncertainty_vs_error(model: nn.Module, device, loader, num_samples: int
         plt.show()
 
     plt.close()
+
+
+def plot_double_wave_sample(
+    t,
+    V_clean,
+    V_noisy,
+    w1: float,
+    w2: float,
+    mu: float = cfg.mu,
+    sigma: float = cfg.noise_std,
+    save_plot: bool = False,
+    show_plot: bool = False,
+):
+    """
+    Plot one example of a double sine wave
+        y(t) = sin(w1 * t) + sin(w2 * t)
+    """
+
+    plt.figure(figsize=(8, 6))
+
+    # clean mixture
+    plt.plot(t, V_clean, label="clean mixture", linewidth=2)
+
+    # noisy sample
+    plt.scatter(t, V_noisy, s=15, alpha=0.7, label="noisy sample", c="black", marker="x")
+
+    plt.xlabel("t")
+    plt.ylabel("sin(w1*t) + sin(w2*t)")
+    plt.title(
+        f"Double-sine example with noise "
+        f"(w1={w1:.3f}, w2={w2:.3f}, mu={mu}, sigma={sigma})"
+    )
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+    plt.legend()
+    plt.tight_layout()
+
+    if save_plot:
+        plt.savefig(
+            cfg.plots_dir / f"double_sine_mu{mu}_sigma{sigma}_w1{w1:.2f}_w2{w2:.2f}.png",
+            dpi=300,
+        )
+
+    if show_plot:
+        plt.show()
+
+    plt.close()
+

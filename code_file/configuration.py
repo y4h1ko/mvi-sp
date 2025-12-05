@@ -25,7 +25,7 @@ This is the GLOBAL configuration file where all hyperparameters and paths are se
 '''
 
 
-PLOTS_DIR = Path("plots/rep06-probability")
+PLOTS_DIR = Path("plots/rep07-double-mixture")
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 CSV_PATH = PLOTS_DIR / "T2_hyperprams_diff_N_and_tdis.csv"
 
@@ -41,8 +41,8 @@ class Config:
         self.discr_of_time = 100                #level of time discretization
         self.omega_min = 0.5                    #minimal value for frequency (omega)
         self.omega_max = 10                     #maximal value for frequency (omega)
-        #self.amplitude_min = 1                  #minimal value for amplitude (A)
-        #self.amplitude_max = 1                  #maximal value for amplitude (A)
+
+        #N=10000 and t= 100 or 300 for best accuraccy
 
         #mu should stay zero so there is no any shift
         self.mu = 0.0                   #mean - noise
