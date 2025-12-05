@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import csv
+import math
 from torch.utils.data import TensorDataset, DataLoader, random_split
 from nflows import flows, transforms, distributions
 

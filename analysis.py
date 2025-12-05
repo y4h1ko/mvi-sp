@@ -434,3 +434,13 @@ def main7():
 
 #fine-tunned T2 with different N and t_disc → searching pattern in bigger/smaller omegas
 #main7()
+
+
+V_np, tar_np, t_np = make_double_sine_dataset(noise=True)
+
+i = 8
+w1, w2 = tar_np[i]                   # (2,) -> two omegas
+V_noisy = V_np[i]                    # noisy mixture from dataset
+V_clean = np.sin(w1 * t_np) + np.sin(w2 * t_np)
+
+plot_double_wave_sample(t_np, V_clean, V_noisy, w1=w1, w2=w2,save_plot=True, show_plot=True)
