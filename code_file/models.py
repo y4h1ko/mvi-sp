@@ -144,10 +144,11 @@ class TransformerModel2(nn.Module):
 
 
 
-class HeadHybridFlow(nn.Module):
+class HeadWithFlow2w(nn.Module):
     '''Normalizing flow head for omegas - now mixture of 2.'''
 
-    def __init__(self, context_dim: int, hidden_features: int=cfg.flow_hidden_features, num_layers: int=cfg.flow_num_layers, out_dim: int=2):
+    def __init__(self, context_dim: int, hidden_features: int=cfg.flow_hidden_features, num_layers: int=cfg.flow_num_layers, 
+                 out_dim: int=2, use_permutations: bool=True):
         super().__init__()
 
         self.context_dim  = context_dim
@@ -156,10 +157,14 @@ class HeadHybridFlow(nn.Module):
         self.out_dim = out_dim
         self.context_net = nn.Linear(context_dim, hidden_features)
 
-        #MAF - creating matrixes which will transform distribution
+        #MAF - transform distribution with matrixes
         transform_list = []
-        for _ in range(num_layers):
-            transform_list.append(transforms.MaskedAffineAutoregressiveTransform(features=out_dim, hidden_features=hidden_features, context_features=hidden_features))
+        for i in range(num_layers):
+            maf = transforms.MaskedAffineAutoregressiveTransform(features=out_dim, hidden_features=hidden_features, context_features=hidden_features)
+            transform_list.append(maf)
+            if use_permutations and i < num_layers - 1:
+                perm = transforms.RandomPermutation(features=out_dim)
+                transform_list.append(perm)
 
         #chaining transformation sequence
         transform = transforms.CompositeTransform(transform_list)
@@ -172,7 +177,6 @@ class HeadHybridFlow(nn.Module):
         return self.context_net(context)
 
     def log_prob(self, omega, context):
-
         ctx = self.encode_context_head(context)
         log_p = self.flow.log_prob(inputs=omega, context=ctx)
         return log_p
@@ -180,16 +184,24 @@ class HeadHybridFlow(nn.Module):
     def sample(self, context, num_samples: int):
         ctx = self.encode_context_head(context)  
     
-        samples_bs1 = self.flow.sample(num_samples=num_samples, context=ctx)
-        samples = samples_bs1.permute(1, 0, 2) 
+        samples = self.flow.sample(num_samples=num_samples, context=ctx)
+        if samples.dim() == 3:
+            S0, S1, D = samples.shape
+
+            if S0 == num_samples:
+                samples = samples.permute(1, 0, 2)
+                print('A')
+            elif S1 == num_samples:
+                samples = samples
+
         return samples
 
 
 
 class TransformerModel3(nn.Module):
-    '''Normalizing-flow head - Hybrid-flow solution.
+    '''Normalizing-flow head.
         - forward(x) returns the mean of samples
-        - log_prob(x, y) for training with NLL
+        - symetric log_prob(x, y) for training with NLL
         - sample(x, S) for uncertainty (S samples)'''
 
     def __init__(self, seq_len: int=cfg.discr_of_time, d_model: int=cfg.dmodel, nhead: int=cfg.nhead, num_layers: int=cfg.num_layers,
@@ -207,19 +219,21 @@ class TransformerModel3(nn.Module):
         self.pre_head_norm = nn.LayerNorm(d_model)
 
         #flowhead
-        self.flow_head = HeadHybridFlow(context_dim=d_model, hidden_features=flow_hidden_features, num_layers=flow_num_layers, out_dim=out_dim)
-        self.reg_head = nn.Sequential(nn.LayerNorm(d_model), nn.Linear(d_model, d_model),  nn.ReLU(), nn.Linear(d_model, out_dim))
+        self.flow_head = HeadWithFlow2w(context_dim=d_model, hidden_features=flow_hidden_features, num_layers=flow_num_layers, out_dim=out_dim)
 
-    def forward(self, src):
+    def forward(self, src, num_samples: int = 50):
         '''Forward pass'''
         src = src.unsqueeze(-1)
         src = self.input_embedding(src)
         src = self.position_encoding(src)
         z = self.transformer_encoder(src)
         pool = z.mean(dim=1)
+        head_norm = self.pre_head_norm(pool)
 
-        pred = self.reg_head(pool)
-        return pred
+        samples = self.flow_head.sample(head_norm, num_samples)
+        samples_sorted, _ = torch.sort(samples, dim=-1)
+        mu = samples_sorted.mean(dim=1)
+        return mu
 
     def log_prob(self, src, target):
         src = src.unsqueeze(-1)
@@ -240,13 +254,13 @@ class TransformerModel3(nn.Module):
 
         return log_p_sym
 
-    def sample(self, src, num_samples: int = 100):
+    def sample(self, src, num_samples: int=100):
         src = src.unsqueeze(-1)
         src = self.input_embedding(src)
         src = self.position_encoding(src)
         z = self.transformer_encoder(src)
         pool = z.mean(dim=1)
-
         head_norm = self.pre_head_norm(pool) 
+        
         samples = self.flow_head.sample(head_norm, num_samples)
         return samples
