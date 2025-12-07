@@ -84,9 +84,7 @@ def make_double_sine_dataset(N: int=cfg.num_of_samples, t_interval: list=cfg.tim
             Vi = 1 * np.sin(w1 * t_val) + 1 * np.sin(w2 * t_val)
         V.append(np.array(Vi))
         
-        #target.append(np.sort([w1,w2]))
         target.append(np.array([w1,w2]))
-        
     #return tuple of arrays of 
     return np.array(V), np.array(target), t_val
 
