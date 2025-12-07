@@ -44,7 +44,6 @@ def prediction_collecter_plot(loader, model, device):
 
     return y_true, y_pred
 
-
 def split_and_load(dataset):
     '''Splits dataset into train, validation and test parts'''
 
@@ -108,8 +107,7 @@ def train_and_eval_training(train_loader, val_loader, device, model, criterion, 
     return model, train_mse_hist, val_mse_hist
 
 
-
-
+#everything for flow head
 def train_and_eval_training_flow(train_loader, val_loader, device, model, optimizer, scheduler, 
                             max_epochs: int=cfg.epochs, print_update: bool=False):
     '''Train the model and evaluate on validation. Saves best model based on validation MSE through training but with NLL loss function'''
@@ -159,8 +157,9 @@ def train_and_eval_training_flow(train_loader, val_loader, device, model, optimi
     return model, train_mse_hist, val_mse_hist
 
 
+#everything for 2 omegas with flow head down there
 @torch.no_grad()
-def evaluate_hybrid(loader, model, device):
+def evaluate2w(loader, model, device):
     """Evaluation for 2D frequency targets that are unordered sets {w1, w2}."""
 
     model.eval()
@@ -192,11 +191,8 @@ def evaluate_hybrid(loader, model, device):
     return mse, mae
 
 @torch.no_grad()
-def prediction_collecter_plot_twofreq_perm(loader, model, device):
-    """
-    Collect y_true, y_pred for 2D unordered targets {w1, w2},
-    aligned per sample using the better of the two permutations.
-    """
+def prediction_collecter_plot_2w(loader, model, device):
+    '''Collect y_true, y_pred for 2D unordered targets {w1, w2}, aligned per sample using the better of the two permutations.'''
     model.eval()
     y_true_list, y_pred_list = [], []
 
@@ -204,13 +200,12 @@ def prediction_collecter_plot_twofreq_perm(loader, model, device):
         xb, yb = xb.to(device), yb.to(device)
         pred = model(xb)
 
-        #permutations errors
+        #permutations handling
         se1 = (pred - yb) ** 2
         se2 = (pred - yb.flip(dims=[1])) ** 2
         se1_sum = se1.sum(dim=1)
         se2_sum = se2.sum(dim=1)
 
-        #True where (t1,t2) is better; False where (t2,t1) is better
         use_orig = (se1_sum <= se2_sum).unsqueeze(1)
 
         aligned_true = torch.where(use_orig, yb, yb.flip(dims=[1]))
@@ -230,7 +225,7 @@ def perm_invariant_mse(pred, target):
     return se_min.mean()
 
 def train_and_eval_training_flow2(train_loader, val_loader, device, model, optimizer, scheduler, 
-                            max_epochs: int=cfg.epochs, print_update: bool=False, lambda_nll: float = 0.1):
+                            max_epochs: int=cfg.epochs, print_update: bool=False, lambda_reg: float = 0.3):
     '''Train the model and evaluate on validation. Saves best model based on validation MSE through training but with NLL loss function'''
 
     #real loop and training and everything....
@@ -246,15 +241,16 @@ def train_and_eval_training_flow2(train_loader, val_loader, device, model, optim
         for xb, yb in train_loader:
             xb, yb = xb.to(device), yb.to(device)
 
-            pred = model(xb)
-            loss_reg = perm_invariant_mse(pred, yb)
-
             #symmetric NLL
             log_p = model.log_prob(xb, yb)
             loss_nll = -log_p.mean()
 
-            loss = loss_reg + lambda_nll * loss_nll
-            
+            #with torch.no_grad():
+            pred_mu = model(xb)
+            loss_reg = perm_invariant_mse(pred_mu, yb)
+
+            loss = loss_nll + lambda_reg * loss_reg
+
             optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
@@ -262,8 +258,8 @@ def train_and_eval_training_flow2(train_loader, val_loader, device, model, optim
 
         scheduler.step()
 
-        tr_mse, tr_mae = evaluate_hybrid(train_loader, model, device)
-        val_mse, val_mae = evaluate_hybrid(val_loader, model, device)
+        tr_mse, tr_mae = evaluate2w(train_loader, model, device)
+        val_mse, val_mae = evaluate2w(val_loader, model, device)
 
         train_mse_hist.append(tr_mse)
         val_mse_hist.append(val_mse)
@@ -275,12 +271,10 @@ def train_and_eval_training_flow2(train_loader, val_loader, device, model, optim
 
         if print_update:
             if epoch % 10 == 0:
-                tr_mse, tr_mae = evaluate(train_loader, model, device)
+                tr_mse, tr_mae = evaluate2w(train_loader, model, device)
                 print(f"Epoch {epoch:3d}; Train MSE {tr_mse:.6f}, MAE {tr_mae:.6f}; Val MSE {val_mse:.6f}, MAE {val_mae:.6f}")
 
     #load the best weights
     model.load_state_dict(best_state)
-
     return model, train_mse_hist, val_mse_hist
-
 
