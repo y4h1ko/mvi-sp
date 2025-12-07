@@ -189,6 +189,7 @@ def plot_parallel_hparams( csv_path: str, top_k: int | None = None, renderer: st
         fig.show()
 
 
+#flowt hings
 @torch.no_grad()
 def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_samples_per_x: int=100, bins: int=50, N: int=cfg.num_of_samples, 
                     t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, 
@@ -240,7 +241,6 @@ def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_sampl
         plt.show()
 
     plt.close()
-
 
 @torch.no_grad()
 def plot_flow_posterior_one_example(model: nn.Module, device, loader, global_index: int=0, num_samples: int=100000, bins: int=100, num_sigmas: int=3, 
@@ -382,7 +382,6 @@ def plot_error_vs_true_omega(y_true, y_pred, smooth_window_frac: float = 0.075, 
 
     plt.close()
 
-
 @torch.no_grad()
 def plot_uncertainty_vs_error(model: nn.Module, device, loader, num_samples: int=100, save_plot: bool=False, show_plot: bool=False,):
     """
@@ -442,17 +441,9 @@ def plot_uncertainty_vs_error(model: nn.Module, device, loader, num_samples: int
     plt.close()
 
 
-def plot_double_wave_sample(
-    t,
-    V_clean,
-    V_noisy,
-    w1: float,
-    w2: float,
-    mu: float = cfg.mu,
-    sigma: float = cfg.noise_std,
-    save_plot: bool = False,
-    show_plot: bool = False,
-):
+#for two omegas
+def plot_double_wave_sample( t, V_clean, V_noisy, w1: float, w2: float,
+    mu: float = cfg.mu, sigma: float = cfg.noise_std, save_plot: bool = False, show_plot: bool = False):
     """
     Plot one example of a double sine wave
         y(t) = sin(w1 * t) + sin(w2 * t)
@@ -487,3 +478,167 @@ def plot_double_wave_sample(
 
     plt.close()
 
+@torch.no_grad()
+def plot_flow_posterior_double_example(model: nn.Module, device,loader, global_index: int=0, num_samples: int=100000, bins: int=100,
+    num_sigmas: int=3, N: int=cfg.num_of_samples, t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, w_max: float=cfg.omega_max,
+    seed=cfg.seed, sigma: float=cfg.noise_std, folder=cfg.plots_dir, fl_hid_feat: int=cfg.flow_hidden_features, fl_lay: int=cfg.flow_num_layers, 
+    save_plot: bool=False, show_plot: bool=False):
+    '''For a chosen example (global_index), sample many times from the flow. Sorted to (w_1, w_2), 
+    and plot two 1D posteriors side-by-side, each with true value, mean μ and ±kσ lines.'''
+    model.eval()
+
+    start = 0
+    for xb, yb in loader:
+        batch_size = xb.size(0)
+        end = start + batch_size
+        if global_index < end:
+            local_idx = global_index - start
+
+            xb = xb.to(device)
+            yb = yb.to(device)
+
+            x_one = xb[local_idx : local_idx + 1]
+            w_true_pair = yb[local_idx]
+            break
+        start = end
+
+    #sort the true pair into (w_1_true, w_2_true)
+    w_true_np = torch.sort(w_true_pair).values.cpu().numpy()
+    w_low_true, w_high_true = float(w_true_np[0]), float(w_true_np[1])
+
+    #sample from flow, sort into (w_1, w_2)
+    samples = model.sample(x_one, num_samples=num_samples)
+    samples = samples.squeeze(0).cpu().numpy()
+
+    if samples.ndim == 3:
+        samples = samples[0]
+
+    samples_sorted = np.sort(samples, axis=1)
+    samples_1 = samples_sorted[:, 0]
+    samples_2 = samples_sorted[:, 1]
+
+    def plot_1d(ax, samples_1d, w_true, name):
+        mu = samples_1d.mean()
+        sigma = samples_1d.std()
+
+        ax.minorticks_on()
+        ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+
+        ax.hist(samples_1d, bins=bins, density=True, color="tab:blue", alpha=0.8, label=f"flow samples {name} | x")
+        ax.axvline(w_true, color="tab:orange", linestyle="--", linewidth=2, label=f"true {name} = {w_true:.3f}")
+        ax.axvline(mu, color="tab:red", linestyle="-", linewidth=2, label=f"mean μ = {mu:.3f}")
+
+        #±kσ lines
+        sigma_label_added = False
+        ks = range(1, num_sigmas + 1)
+        for k in ks:
+            left = mu - k * sigma
+            right = mu + k * sigma
+            label_sigma = r"±kσ lines" if not sigma_label_added else None
+            sigma_label_added = True
+            ax.axvline(left,  linestyle="-.", linewidth=1.8, color="tab:brown", alpha=0.7, label=label_sigma)
+            ax.axvline(right, linestyle="-.", linewidth=1.8, color="tab:brown", alpha=0.7)
+
+        span = max(5 * sigma, 0.02)
+        ax.set_xlim(mu - span, mu + span)
+
+        ax.set_xlabel(name)
+        ax.set_ylabel("'samples'")
+        ax.legend(fontsize=8)
+
+        ax2 = ax.twiny()
+        ax2.set_xlim(ax.get_xlim())
+        ticks = [mu + k * sigma for k in range(-num_sigmas, num_sigmas + 1)]
+        tick_labels = []
+        for k in range(-num_sigmas, num_sigmas + 1):
+            if k == 0:
+                tick_labels.append(r"μ")
+            elif k < 0:
+                tick_labels.append(rf"{k}σ")
+            else:
+                tick_labels.append(rf"+{k}σ")
+        ax2.set_xticks(ticks)
+        ax2.set_xticklabels(tick_labels)
+        ax2.tick_params(axis="x", labelsize=8, pad=2)
+
+    fig, (ax_low, ax_high) = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
+
+    plot_1d(ax_low,  samples_1,  w_low_true,  "w_1")
+    plot_1d(ax_high, samples_2, w_high_true, "w_2")
+
+    fig.suptitle(f"Probability for one example of ω_1 and ω_2 \nN={N}, ω=[{w_min}-{w_max}], tdis={t_disc}, std={sigma}", fontsize=13)
+    fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+    if save_plot:
+        plt.savefig(folder/ f"Probab_density_twofreq_idx{global_index}_FlowHid{fl_hid_feat}_FlowLay{fl_lay}_N{N}_tdis{t_disc}_std{sigma}_w{w_min}-{w_max}_seed{seed}.png", dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close(fig)
+
+def plot_pred_vs_true_double(y_true, y_pred, test_mse, test_mae, N: int=cfg.num_of_samples, t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min,
+            w_max: float=cfg.omega_max, seed=cfg.seed, sigma: float=cfg.noise_std, folder=cfg.plots_dir, save_plot: bool=False, show_plot: bool=False):
+    '''Plot predicted vs true values frequencies into scatter plot from test set - for double-frequency model, using sorted pairs.
+    
+        w_1  = min(w1, w2)
+        w_2 = max(w1, w2)
+
+    - save_plot: if True, saves the plot to the specified folder as .png
+    - show_plot: if True, displays the plot on the screen
+    - other optional parameters are for plot title and filename
+
+    Saved plot name is like: 'T3_w{w_min}-{w_max}_N{N}_tdis{t_disc}_seed{seed}_PREDvsREAL.png'
+    '''
+
+    if hasattr(y_true, "detach"):
+        y_true_np = y_true.detach().cpu().numpy()
+        y_pred_np = y_pred.detach().cpu().numpy()
+    else:
+        y_true_np = np.asarray(y_true)
+        y_pred_np = np.asarray(y_pred)
+
+    #sorting each pair by value
+    y_true_np = np.sort(y_true_np, axis=1)
+    y_pred_np = np.sort(y_pred_np, axis=1)
+
+    w1_true, w1_pred = y_true_np[:, 0], y_pred_np[:, 0]
+    w2_true, w2_pred = y_true_np[:, 1], y_pred_np[:, 1]
+
+    mae_w1 = np.mean(np.abs(w1_pred - w1_true))
+    mae_w2 = np.mean(np.abs(w2_pred - w2_true))
+
+    mn = min(y_true_np.min(), y_pred_np.min())
+    mx = max(y_true_np.max(), y_pred_np.max())
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 7))
+    ax1, ax2 = axes
+
+    # small internal helper so both panels look the same
+    def scatter_panel(ax, x_true, y_pred, label, mae):
+        ax.scatter(x_true, y_pred, s=14, alpha=0.6)
+        ax.plot([mn, mx], [mn, mx], linestyle="--", linewidth=1)
+        ax.set_xlabel(f"True {label}")
+        ax.set_ylabel(f"Predicted {label}")
+        ax.set_title(f"{label} – MAE={mae:.4f}")
+        ax.grid(True, which="both")
+
+    scatter_panel(ax1, w1_true, w1_pred, "w_1", mae_w1)
+    scatter_panel(ax2, w2_true, w2_pred, "w_2", mae_w2)
+
+    fig.suptitle(
+        f"Double-sine – Test N={N}, w=[{w_min}-{w_max}], tdis={t_disc}\n"
+        f"Overall MSE={test_mse:.6f}, MAE={test_mae:.6f}, std={sigma}", fontsize=11)
+
+    try:
+        fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+    except Exception:
+        pass
+
+    if save_plot:
+        fig.savefig(folder / f"T3_double_sorted_N{N}_tdis{t_disc}_w{w_min}-{w_max}_seed{seed}_std{sigma}_PREDvsREAL2.png", dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close(fig)
