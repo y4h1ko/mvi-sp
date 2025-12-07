@@ -218,6 +218,24 @@ def prediction_collecter_plot_2w(loader, model, device):
     y_pred = torch.cat(y_pred_list, dim=0)
     return y_true, y_pred
 
+@torch.no_grad()
+def prediction_collecter_plot_double_raw(loader, model, device):
+    """Collect raw (unsorted) predictions and targets for 2-freq model."""
+
+    model.eval()
+    y_true_list, y_pred_list = [], []
+
+    for xb, yb in loader:
+        xb, yb = xb.to(device), yb.to(device)
+        pred = model(xb)                  # (B, 2)
+
+        y_true_list.append(yb.cpu())
+        y_pred_list.append(pred.cpu())
+
+    y_true = torch.cat(y_true_list, dim=0)
+    y_pred = torch.cat(y_pred_list, dim=0)
+    return y_true, y_pred
+
 def perm_invariant_mse(pred, target):
     se1 = (pred - target).pow(2).sum(dim=1)
     se2 = (pred - target.flip(dims=[1])).pow(2).sum(dim=1)
