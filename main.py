@@ -116,11 +116,17 @@ def main3():
     print(f"Test MSE {test_mse:.6f}, MAE {test_mae:.6f}")
 
     #plotting data collection
-    y_true, y_pred = prediction_collecter_plot_2w(test_loader, model, device)
+    #y_true, y_pred = prediction_collecter_plot_2w(test_loader, model, device)
 
     #plots - save or show option
     #plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=False)
     #plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=False, y_limit=0.025, zoom='0.025')
+
+    #plot_pred_vs_true_double(y_true, y_pred, test_mse=test_mse, test_mae=test_mae, save_plot=False, show_plot=True)
+    #plot_freq_space_true_vs_pred(y_true, y_pred, test_mse=test_mse, test_mae=test_mae, save_plot=False, show_plot=True)
+
+    #for idx in range(0, 5, 2):
+    #    plot_flow_posterior_double_example(model, device, test_loader, global_index=idx, num_samples=100000, bins=50, save_plot=False, show_plot=True)
 
     
 #main1()

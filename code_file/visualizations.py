@@ -642,3 +642,54 @@ def plot_pred_vs_true_double(y_true, y_pred, test_mse, test_mae, N: int=cfg.num_
         plt.show()
 
     plt.close(fig)
+
+def plot_freq_space_true_vs_pred(y_true, y_pred, test_mse, test_mae, N: int = cfg.num_of_samples, t_disc: int = cfg.discr_of_time, w_min: float = cfg.omega_min,
+    w_max: float = cfg.omega_max, seed=cfg.seed, sigma: float = cfg.noise_std, folder=cfg.plots_dir, save_plot: bool = False, show_plot: bool = False):
+    '''Single plot with both true and predicted (w_1, w_2) in frequency space.'''
+
+    if hasattr(y_true, "detach"):
+        y_true_np = y_true.detach().cpu().numpy()
+        y_pred_np = y_pred.detach().cpu().numpy()
+    else:
+        y_true_np = np.asarray(y_true)
+        y_pred_np = np.asarray(y_pred)
+
+    #sort each pair by value, not by error
+    y_true_np = np.sort(y_true_np, axis=1)
+    y_pred_np = np.sort(y_pred_np, axis=1)
+
+    w1_true, w1_pred = y_true_np[:, 0], y_pred_np[:, 0]  # w_1
+    w2_true, w2_pred = y_true_np[:, 1], y_pred_np[:, 1]  # w_2
+
+    #component-wise MAE
+    mae_w1 = np.mean(np.abs(w1_pred - w1_true))
+    mae_w2 = np.mean(np.abs(w2_pred - w2_true))
+
+    mn = min(y_true_np.min(), y_pred_np.min())
+    mx = max(y_true_np.max(), y_pred_np.max())
+
+    fig, ax = plt.subplots(figsize=(9, 8))
+
+    ax.scatter(w1_true, w2_true, s=18, alpha=0.6, label="True", color="tab:blue")
+    ax.scatter(w1_pred, w2_pred, s=18, alpha=0.6, label="Pred", color="tab:orange")
+
+    ax.set_xlabel("w_1")
+    ax.set_ylabel("w_2")
+    ax.set_title(f"Frequency space (MAE w1={mae_w1:.4f}, w2={mae_w2:.4f})")
+    ax.grid(True, which="both")
+    ax.set_xlim(w_min, w_max)
+    ax.set_ylim(w_min, w_max)
+    ax.set_aspect("equal", "box")
+    ax.legend()
+
+    fig.suptitle(f"Double-sine – Test N={N}, w=[{w_min}-{w_max}], tdis={t_disc}\nOverall MSE={test_mse:.6f}, MAE={test_mae:.6f}, std={sigma}", fontsize=11)
+    fig.tight_layout(rect=[0, 0.03, 1, 0.93])
+
+    if save_plot:
+        fig.savefig(folder / f"T3_double_frequencyspace_N{N}_tdis{t_disc}_w{w_min}-{w_max}_seed{seed}_std{sigma}_PREDvsREAL.png", dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close(fig)
+
