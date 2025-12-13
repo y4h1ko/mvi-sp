@@ -442,41 +442,85 @@ def plot_uncertainty_vs_error(model: nn.Module, device, loader, num_samples: int
 
 
 #for two omegas
-def plot_double_wave_sample( t, V_clean, V_noisy, w1: float, w2: float,
-    mu: float = cfg.mu, sigma: float = cfg.noise_std, save_plot: bool = False, show_plot: bool = False):
+def plot_double_wave_sample_general(t, V_noisy, w1: float, w2: float|None=None, mu: float=cfg.mu, sigma: float=cfg.noise_std, signal: str="single", 
+                save_plot: bool=False, show_plot: bool=False):
     """
-    Plot one example of a double sine wave
-        y(t) = sin(w1 * t) + sin(w2 * t)
+    Plot one example of a signal.
+
+    signal options:
+      - "single":
+            y(t) = sin(w1*t)
+      - "linear":
+            y(t) = sin(w1*t) + sin(w2*t)
+      - "product":
+            y(t) = sin(w1*t) + sin(w2*t) + sin(w1*t)*sin(w2*t)
+
+    Notes:
+      - w2 is ignored for signal="single"
+      - V_noisy should already come from the dataset
     """
+
+    t_clean = np.linspace(t.min(), t.max(), len(t) * 100)
+
+    if signal == "linear":
+        s1 = np.sin(w1 * t_clean)
+        s2 = np.sin(w2 * t_clean)
+        V_clean = s1 + s2
+        ylabel = "sin(w1*t) + sin(w2*t)"
+        title = f"Example (w1={w1:.3f}, w2={w2:.3f}, mu={mu}, sigma={sigma})"
+        fname = f"double_sine_linear_mu{mu}_sigma{sigma}_w1{w1:.2f}_w2{w2:.2f}.png"
+    elif signal in ("product", "nonlinear"):
+        s1 = np.sin(w1 * t_clean)
+        s2 = np.sin(w2 * t_clean)
+        V_clean = s1 + s2 + s1 * s2
+        ylabel = "sin(w1*t) + sin(w2*t) + sin(w1*t)*sin(w2*t)"
+        title = f"Example (w1={w1:.3f}, w2={w2:.3f}, mu={mu}, sigma={sigma})"
+        fname = f"double_sine_product_mu{mu}_sigma{sigma}_w1{w1:.2f}_w2{w2:.2f}.png"
+    elif signal == "single":
+        V_clean = np.sin(w1 * t_clean)
+        ylabel = "sin(w1*t)"
+        title = f"Example (w={w1:.3f}, mu={mu}, sigma={sigma})"
+        fname = f"sine_single_mu{mu}_sigma{sigma}_w{w1:.2f}.png"
+    else:
+        raise ValueError("signal must be 'linear', 'product'/'nonlinear' or 'single'")
 
     plt.figure(figsize=(8, 6))
 
-    # clean mixture
-    plt.plot(t, V_clean, label="clean mixture", linewidth=2)
-
-    # noisy sample
+    plt.plot(t_clean, V_clean, label="clean mixture", linewidth=2)
     plt.scatter(t, V_noisy, s=15, alpha=0.7, label="noisy sample", c="black", marker="x")
 
     plt.xlabel("t")
-    plt.ylabel("sin(w1*t) + sin(w2*t)")
-    plt.title(
-        f"Double-sine example with noise "
-        f"(w1={w1:.3f}, w2={w2:.3f}, mu={mu}, sigma={sigma})"
-    )
+    plt.ylabel(ylabel)
+    plt.title(f"{title}")
     plt.grid(True, which="both", linestyle="--", linewidth=0.5)
     plt.legend()
     plt.tight_layout()
 
     if save_plot:
-        plt.savefig(
-            cfg.plots_dir / f"double_sine_mu{mu}_sigma{sigma}_w1{w1:.2f}_w2{w2:.2f}.png",
-            dpi=300,
-        )
+        plt.savefig(cfg.plots_dir / fname, dpi=300)
 
     if show_plot:
         plt.show()
 
     plt.close()
+
+def plot_waves_clean_and_signal_points(i:int=0, wave_type: str="linear", noise: bool=False, save_plot: bool=False, show_plot: bool=False):
+    '''Plotting one sine wave sample from dataset'''
+
+    if wave_type == "linear":
+        V_np, tar_np, t_np = make_double_sine_dataset(noise=noise)
+        w1, w2 = tar_np[i]
+    elif wave_type == "product":
+        V_np, tar_np, t_np = make_double_sine_nonlinear_dataset(noise=noise)
+        w1, w2 = tar_np[i]
+    elif wave_type == "single":
+        V_np, tar_np, t_np = make_sine_dataset(noise=noise)
+        w1 = float(tar_np[i])
+        w2 = None
+    V_noisy = V_np[i]
+    
+    plot_double_wave_sample_general(t_np, V_noisy, w1=w1, w2=w2, signal=wave_type, save_plot=save_plot, show_plot=show_plot)
+
 
 @torch.no_grad()
 def plot_flow_posterior_double_example(model: nn.Module, device,loader, global_index: int=0, num_samples: int=100000, bins: int=100,
@@ -693,3 +737,90 @@ def plot_freq_space_true_vs_pred(y_true, y_pred, test_mse, test_mae, N: int = cf
 
     plt.close(fig)
 
+#Contour visualizations for 2 omegas
+def plot_analytic_contours_sin2(t0: float=1.0, w_min: float=cfg.omega_min, w_max: float=cfg.omega_max, n_points: int=1000, levels=None, save_plot: bool=False,
+    show_plot: bool=True, folder=cfg.plots_dir, triple_t: bool=False, dt: float=0.1, n_levels: int=40, cmap: str="viridis", signal: str="linear", 
+    fullcolor: bool=True, fixed_range: bool=True):
+    """
+    Contour plots in (w1,w2) for different analytic "signal" formulas.
+
+    signal options:
+      - "linear":            sin(t*w1) + sin(t*w2)
+      - "product":           sin(t*w1) + sin(t*w2) + sin(t*w1)*sin(t*w2)
+      - "nonlinear_sq":      sin(t*w1^2) + sin(t*w2^2) + sin(t*w1^2)*sin(t*w2^2)
+      - "nonlinear_sinprod": sin(t*w1) + sin(t*w2) + sin(t*w1*w2)
+    """
+
+    w1 = np.linspace(w_min, w_max, n_points)
+    w2 = np.linspace(w_min, w_max, n_points)
+    W1, W2 = np.meshgrid(w1, w2, indexing="xy")
+
+    def compute_F(tt):
+        if signal == "linear":
+            return np.sin(tt * W1) + np.sin(tt * W2), "F(w1,w2)=sin(t·w1)+sin(t·w2)", (-2.0, 2.0)
+
+        if signal == "product":
+            F = np.sin(tt * W1) + np.sin(tt * W2) + np.sin(tt * W1) * np.sin(tt * W2)
+            return F, "F=sin(t·w1)+sin(t·w2)+sin(t·w1)·sin(t·w2)", (-3.0, 3.0)
+
+        if signal == "nonlinear_sq":
+            F = np.sin(tt * (W1**2)) + np.sin(tt * (W2**2)) + np.sin(tt * (W1**2)) * np.sin(tt * (W2**2))
+            return F, "F=sin(t·w1²)+sin(t·w2²)+sin(t·w1²)·sin(t·w2²)", (-3.0, 3.0)
+
+        if signal == "nonlinear_sinprod":
+            F = np.sin(tt * W1) + np.sin(tt * W2) + np.sin(tt * (W1 * W2))
+            return F, "F=sin(t·w1)+sin(t·w2)+sin(t·w1·w2)", (-3.0, 3.0)
+
+        raise ValueError(f"Unknown signal='{signal}'. Try: linear, product, nonlinear_sq, nonlinear_sinprod")
+
+    t_list = [t0]
+    if triple_t:
+        t_list = [t0 - dt, t0, t0 + dt]
+
+    ncols = len(t_list)
+    fig, axes = plt.subplots(1, ncols, figsize=(6 * ncols, 6), sharex=True, sharey=True)
+    if ncols == 1:
+        axes = [axes]
+
+    _, suptitle, (theo_vmin, theo_vmax) = compute_F(t_list[0])
+
+    if fixed_range:
+        vmin, vmax = theo_vmin, theo_vmax
+    else:
+        F0, _, _ = compute_F(t_list[0])
+        vmin, vmax = float(np.min(F0)), float(np.max(F0))
+
+    if levels is None:
+        levels = np.linspace(vmin, vmax, n_levels)
+
+    last_cf = None
+    for ax, tt in zip(axes, t_list):
+        F, _, _ = compute_F(tt)
+
+        if fullcolor:
+            last_cf = ax.contourf(W1, W2, F, levels=levels, cmap=cmap, vmin=vmin, vmax=vmax)
+        elif not fullcolor:
+            last_cf = ax.contour(W1, W2, F, levels=levels, cmap=cmap, vmin=vmin, vmax=vmax)
+        ax.set_title(f"t= {tt:.4g}")
+        ax.set_xlabel("w1")
+        ax.set_ylabel("w2")
+        ax.set_xlim(w_min, w_max)
+        ax.set_ylim(w_min, w_max)
+        ax.set_aspect("equal", "box")
+
+    fig.subplots_adjust(right=0.88)
+    cax = fig.add_axes([0.90, 0.15, 0.015, 0.70])
+    cbar = fig.colorbar(last_cf, cax=cax)
+    cbar.set_label("F(w1,w2)")
+    cbar.set_ticks(np.linspace(vmin, vmax, 9))
+
+    fig.suptitle(f"Contours: {suptitle}", y=1.02)
+
+    if save_plot:
+        suffix = f"_triple_dt{dt}" if triple_t else ""
+        fig.savefig(folder / f"analytic_contour_{signal}_t{t0:.2f}{suffix}_w{w_min}-{w_max}.png", dpi=300)
+
+    if show_plot:
+        plt.show()
+
+    plt.close(fig)
