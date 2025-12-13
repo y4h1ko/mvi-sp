@@ -224,8 +224,7 @@ def perm_invariant_mse(pred, target):
     se_min = torch.minimum(se1, se2)
     return se_min.mean()
 
-def train_and_eval_training_flow2(train_loader, val_loader, device, model, optimizer, scheduler, 
-                            max_epochs: int=cfg.epochs, print_update: bool=False, lambda_reg: float = 0.3):
+def train_and_eval_training_flow2(train_loader, val_loader, device, model, optimizer, scheduler, max_epochs: int=cfg.epochs, print_update: bool=False):
     '''Train the model and evaluate on validation. Saves best model based on validation MSE through training but with NLL loss function'''
 
     #real loop and training and everything....
@@ -243,13 +242,7 @@ def train_and_eval_training_flow2(train_loader, val_loader, device, model, optim
 
             #symmetric NLL
             log_p = model.log_prob(xb, yb)
-            loss_nll = -log_p.mean()
-
-            #with torch.no_grad():
-            pred_mu = model(xb)
-            loss_reg = perm_invariant_mse(pred_mu, yb)
-
-            loss = loss_nll + lambda_reg * loss_reg
+            loss = -log_p.mean()
 
             optimizer.zero_grad()
             loss.backward()
