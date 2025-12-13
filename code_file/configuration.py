@@ -25,9 +25,9 @@ This is the GLOBAL configuration file where all hyperparameters and paths are se
 '''
 
 
-PLOTS_DIR = Path("plots/rep07-double-mixture")
+PLOTS_DIR = Path("plots/rep08-double-better")
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
-CSV_PATH = PLOTS_DIR / "T2_hyperprams_diff_N_and_tdis.csv"
+CSV_PATH = PLOTS_DIR / "T3_hyperprams_linerDoubleWave.csv"
 
 
 class Config:

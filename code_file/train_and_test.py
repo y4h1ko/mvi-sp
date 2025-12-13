@@ -230,7 +230,7 @@ def train_and_eval_training_flow2(train_loader, val_loader, device, model, optim
 
     #real loop and training and everything....
     best_val = float("inf")
-    best_state = None
+    best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
 
     train_mse_hist, val_mse_hist = [], []
 
