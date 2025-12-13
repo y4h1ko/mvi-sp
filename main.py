@@ -91,7 +91,7 @@ def main2():
 
 
 #main loop
-def main3():
+def main3(dataset: str="linear"):
     #setup for reproducibility and device
     set_seed()
     device = set_device()
@@ -102,14 +102,17 @@ def main3():
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs)
 
     #creating dataset and converting to tensor dataset
-    V_np, tar_np, t_np = make_double_sine_dataset(noise=True)
+    if dataset == "linear":
+        V_np, tar_np, t_np = make_double_sine_dataset(noise=True)
+    elif dataset == "nonlinear":
+        V_np, tar_np, t_np = make_double_sine_nonlinear_dataset(noise=True)
     ds_full = from_array_to_tensor_dataset(V_np, tar_np)
 
     #splitting to train, val and test parts
     train_loader, val_loader, test_loader = split_and_load(ds_full)
 
     #training and validation steps
-    model, train_mse_hist, val_mse_hist = train_and_eval_training_flow2(train_loader, val_loader, device, model, optimizer, scheduler, lambda_reg=0.0)
+    model, train_mse_hist, val_mse_hist = train_and_eval_training_flow2(train_loader, val_loader, device, model, optimizer, scheduler)
 
     #test step
     test_mse, test_mae = evaluate2w(test_loader, model, device)

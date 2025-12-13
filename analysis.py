@@ -312,12 +312,12 @@ def main5():
 
 def main6():
     '''used to tune flow hyperparameters... but '''
-    dmodel_list = [64] ##256
-    nhead_list = [2] ##8
-    num_of_layers_list = [2] ##1
-    dim_forward_list = [64] ##256
-    flow_hid_features_list = [96, 128, 160, 192, 224, 256]
-    flow_layers_list = [4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 18]
+    dmodel_list = [64]
+    nhead_list = [2]
+    num_of_layers_list = [2]
+    dim_forward_list = [64]
+    flow_hid_features_list = [128]
+    flow_layers_list = [4]
     results = []
 
     for a in dmodel_list:
@@ -435,7 +435,7 @@ def main7():
 
 #analyze_flow_distributions(TransformerModel2(), num_flow_samples=1000, noise=True, show_plots=True)
 
-#searching across hyperparameters in T2
+#searching across hyperparameters in T3
 #main6()
 
 #fine-tunned T2 with different N and t_disc → searching pattern in bigger/smaller omegas
@@ -443,10 +443,11 @@ def main7():
 
 
 #plotting different example waves with clean and noisy points
-#plot_waves_clean_and_signal_points(i=1, wave_type="product", noise=True, save_plot=False, show_plot=True)
-#plot_waves_clean_and_signal_points(i=8, wave_type="linear", noise=True, save_plot=False, show_plot=True)
+#plot_waves_clean_and_signal_points(i=18, wave_type="product", noise=True, save_plot=False, show_plot=True)
+#plot_waves_clean_and_signal_points(i=5, wave_type="linear", noise=True, save_plot=False, show_plot=True)
 #plot_waves_clean_and_signal_points(i=4, wave_type="single", noise=True, save_plot=False, show_plot=True)
+plot_analytic_contours_sin2(t0=2.0, signal="linear", triple_t=True, dt=1.0, levels=10, fullcolor=False, save_plot=True, show_plot=False)
+plot_analytic_contours_sin2(t0=2.0, signal="product", triple_t=True, dt=1.0, levels=10, fullcolor=False, save_plot=True, show_plot=False)
+#plot_analytic_contours_sin2(t0=2.0, signal="linear", triple_t=True, dt=1.0, save_plot=True, show_plot=False)
+#plot_analytic_contours_sin2(t0=2.0, signal="product", triple_t=True, dt=1.0, save_plot=True, show_plot=False)
 
-
-
-main6()
