@@ -312,12 +312,12 @@ def main5():
 
 def main6():
     '''used to tune flow hyperparameters... but '''
-    dmodel_list = [64]
-    nhead_list = [2] 
-    num_of_layers_list = [2]
-    dim_forward_list = [64]
-    flow_hid_features_list = [16, 32, 64, 128, 256, 512]
-    flow_layers_list = [1, 2, 3, 4, 5, 6, 8]
+    dmodel_list = [64] ##256
+    nhead_list = [2] ##8
+    num_of_layers_list = [2] ##1
+    dim_forward_list = [64] ##256
+    flow_hid_features_list = [96, 128, 160, 192, 224, 256]
+    flow_layers_list = [4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 18]
     results = []
 
     for a in dmodel_list:
@@ -328,17 +328,23 @@ def main6():
                         for f in flow_layers_list:
                             set_seed()
                             device = set_device()
-                            V_np, tar_np, t_np = make_sine_dataset(noise=True)
+                            #V_np, tar_np, t_np = make_sine_dataset(noise=True)
+                            V_np, tar_np, t_np = make_double_sine_dataset(noise=True)
                             ds_full = from_array_to_tensor_dataset(V_np, tar_np)
                             train_loader, val_loader, test_loader = split_and_load(ds_full)
 
-                            model = TransformerModel2(d_model=a, nhead=b, num_layers=c, dim_f=d, flow_hidden_features=e, flow_num_layers=f).to(device)
+                            #model = TransformerModel2(d_model=a, nhead=b, num_layers=c, dim_f=d, flow_hidden_features=e, flow_num_layers=f).to(device)
+                            model = TransformerModel3(d_model=a, nhead=b, num_layers=c, dim_f=d, flow_hidden_features=e, flow_num_layers=f).to(device)
                             optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.learning_rate, weight_decay=cfg.weight_decay)
                             scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.epochs)
 
-                            model, train_mse_hist, val_mse_hist = train_and_eval_training_flow(train_loader, val_loader, device, model, optimizer, scheduler)
+                            #model, train_mse_hist, val_mse_hist = train_and_eval_training_flow(train_loader, val_loader, device, model, optimizer, scheduler)
+                            model, train_mse_hist, val_mse_hist = train_and_eval_training_flow2(train_loader, val_loader, device, model, optimizer, scheduler, lambda_reg=0.0)
 
-                            test_mse, test_mae = evaluate(test_loader, model, device)
+                            if min(val_mse_hist) == "nan":
+                                continue
+
+                            test_mse, test_mae = evaluate2w(test_loader, model, device)
                             
                             print(f'Hyperparams: d_model: {a}, nhead: {b}, num_layers: {c}, dim_f: {d},' + 
                                   f'low_hidden: {e}, flow_layers: {f}, best_val_mse: {min(val_mse_hist)}, test_mse: {test_mse}, test_mae: {test_mae}')
@@ -436,11 +442,11 @@ def main7():
 #main7()
 
 
-V_np, tar_np, t_np = make_double_sine_dataset(noise=True)
+#plotting different example waves with clean and noisy points
+#plot_waves_clean_and_signal_points(i=1, wave_type="product", noise=True, save_plot=False, show_plot=True)
+#plot_waves_clean_and_signal_points(i=8, wave_type="linear", noise=True, save_plot=False, show_plot=True)
+#plot_waves_clean_and_signal_points(i=4, wave_type="single", noise=True, save_plot=False, show_plot=True)
 
-i = 8
-w1, w2 = tar_np[i]                   # (2,) -> two omegas
-V_noisy = V_np[i]                    # noisy mixture from dataset
-V_clean = np.sin(w1 * t_np) + np.sin(w2 * t_np)
 
-plot_double_wave_sample(t_np, V_clean, V_noisy, w1=w1, w2=w2,save_plot=True, show_plot=True)
+
+main6()
