@@ -3,7 +3,9 @@ from .dataset_creation import *
 
 
 def plot_wave_samples(t, V_clean, V_noisy, w: float=1.0, mu: float=cfg.mu, sigma: float=cfg.noise_std, save_plot: bool=False, show_plot: bool=False):
-    '''Plot a single sine wave with and without Gaussian noise as example.
+    ''' !!!DEPRECATED!!!
+    
+    Plot a single sine wave with and without Gaussian noise as example.
     
     - save_plot: when True, saves the plot to the specified folder as .png
     - show_plot: when True, displays the plot on the screen
@@ -189,7 +191,7 @@ def plot_parallel_hparams( csv_path: str, top_k: int | None = None, renderer: st
         fig.show()
 
 
-#flowt hings
+#flowt things
 @torch.no_grad()
 def plot_dataset_vs_learned_marginal(model: nn.Module, device, loader, num_samples_per_x: int=100, bins: int=50, N: int=cfg.num_of_samples, 
                     t_disc: int=cfg.discr_of_time, w_min: float=cfg.omega_min, w_max: float=cfg.omega_max, seed=cfg.seed, folder=cfg.plots_dir, 
@@ -385,7 +387,7 @@ def plot_error_vs_true_omega(y_true, y_pred, smooth_window_frac: float = 0.075, 
 @torch.no_grad()
 def plot_uncertainty_vs_error(model: nn.Module, device, loader, num_samples: int=100, save_plot: bool=False, show_plot: bool=False,):
     """
-    !! DEPRICATED !!
+    !! DEPRICATED !! didnt use this plot in the end. Better is plot_error_vs_true_omega
 
     For each example:
       - draw many ω samples from p(ω | x)

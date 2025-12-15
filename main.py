@@ -7,6 +7,7 @@ from code_files.visualizations import *
 
 #main loop
 def main1(plot1: bool = False, plot2: bool = False):
+    '''Originaly transformer model without flow, only deterministic output without uncertainity estimation for single frequency sine wave dataset.'''
     #setup for reproducibility and device
     set_seed()
     device = set_device()
@@ -20,7 +21,6 @@ def main1(plot1: bool = False, plot2: bool = False):
     #creating dataset and converting to tensor dataset
     V_np, tar_np, t_np = make_sine_dataset(noise=True)
     ds_full = from_array_to_tensor_dataset(V_np, tar_np)
-
 
     #splitting to train, val and test parts
     train_loader, val_loader, test_loader = split_and_load(ds_full)

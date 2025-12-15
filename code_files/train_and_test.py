@@ -1,7 +1,6 @@
 from .imports_and_libraries import *
 
-
-
+#general utility functions
 def set_device():
     '''Set device to cuda if available else cpu'''
 
@@ -9,6 +8,23 @@ def set_device():
     #print(device.type) 
     return device
 
+def split_and_load(dataset):
+    '''Splits dataset into train, validation and test parts'''
+
+    #spltting to train, val and test parts
+    ds_train, ds_val, ds_test = random_split(
+        dataset, [0.6, 0.2, 0.2],
+        generator=torch.Generator().manual_seed(0)
+    )
+
+    batch = min(32, max(1, len(ds_train)))
+    train_loader = DataLoader(ds_train, batch_size=batch, shuffle=True)
+    val_loader = DataLoader(ds_val, batch_size=batch, shuffle=False)
+    test_loader = DataLoader(ds_test, batch_size=batch, shuffle=False)
+
+    return train_loader, val_loader, test_loader
+
+#functions for model without flow head
 @torch.no_grad()
 def evaluate(loader, model, device):
     '''Evaluation step returning MSE and MAE'''
@@ -43,22 +59,6 @@ def prediction_collecter_plot(loader, model, device):
     y_pred = torch.cat(y_pred)
 
     return y_true, y_pred
-
-def split_and_load(dataset):
-    '''Splits dataset into train, validation and test parts'''
-
-    #spltting to train, val and test parts
-    ds_train, ds_val, ds_test = random_split(
-        dataset, [0.6, 0.2, 0.2],
-        generator=torch.Generator().manual_seed(0)
-    )
-
-    batch = min(32, max(1, len(ds_train)))
-    train_loader = DataLoader(ds_train, batch_size=batch, shuffle=True)
-    val_loader = DataLoader(ds_val, batch_size=batch, shuffle=False)
-    test_loader = DataLoader(ds_test, batch_size=batch, shuffle=False)
-
-    return train_loader, val_loader, test_loader
 
 def train_and_eval_training(train_loader, val_loader, device, model, criterion, optimizer, scheduler, 
                             max_epochs: int=cfg.epochs, print_update: bool=False):
@@ -107,7 +107,7 @@ def train_and_eval_training(train_loader, val_loader, device, model, criterion, 
     return model, train_mse_hist, val_mse_hist
 
 
-#everything for flow head
+#everything for flow head with one frequency
 def train_and_eval_training_flow(train_loader, val_loader, device, model, optimizer, scheduler, 
                             max_epochs: int=cfg.epochs, print_update: bool=False):
     '''Train the model and evaluate on validation. Saves best model based on validation MSE through training but with NLL loss function'''

@@ -15,5 +15,5 @@ import plotly.graph_objects as go
 import plotly.io as pio
 
 
-#custom import
+#custom import for importing all congiguration variables
 from .configuration import cfg
