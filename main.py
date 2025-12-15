@@ -1,9 +1,9 @@
-from code_file.imports_and_libraries import *
-from code_file.dataset_creation import *
-from code_file.positional_encodings import *
-from code_file.models import *
-from code_file.train_and_test import *
-from code_file.visualizations import *
+from code_files.imports_and_libraries import *
+from code_files.dataset_creation import *
+from code_files.positional_encodings import *
+from code_files.models import *
+from code_files.train_and_test import *
+from code_files.visualizations import *
 
 #main loop
 def main1(plot1: bool = False, plot2: bool = False):
