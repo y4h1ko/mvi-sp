@@ -2,6 +2,7 @@
 lectures_conversations_articles/
 .vscode/
 __pycache__/
+article_plots/
 
 #files
 assignment_screenshot.png
@@ -12,3 +13,5 @@ ntb_ranmdom.ipynb
 ntb_ranmdomNonLinear.ipynb
 NonProbabModelWithPermutatioonMixture.ipynb
 Milestone-MVI-eng.docx
+10k300.ipynb
+articleplottinghelper.ipynb
