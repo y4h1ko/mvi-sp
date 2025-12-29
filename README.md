@@ -5,6 +5,7 @@ This repository contains code and experiments accompanying the paper:
 
 **“A Simple Parameter Inference with Transformers”**
 
+*All necessary information about run is in the introduction.ipynb*
 ## Overview
 
 Starting from a single-frequency sinusoid, the project progressively increases signal complexity by:
@@ -44,7 +45,6 @@ The goal is to infer:
 - $\omega$ in the single-frequency case,
 - unordered pairs $\{\omega_1, \omega_2\}$ in the two-frequency cases.
 
-## Implemented models
 
 ### Transformer encoder
 - Encoder-only Transformer
@@ -85,4 +85,5 @@ Everything was runned with cude device
 ├── main.py                  # Prepared final models
 ├── notebooks/               # Exploratory notebooks
 ├── plots/                   # Figures and tables
+├── papers/                  # Milestone and Final report (LATEX source)
 └── README.md
