@@ -37,7 +37,7 @@ def main1(plot1: bool = False, plot2: bool = False):
 
     #plots - save or show option
     if plot1:
-        plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=True, show_plot=False)
+        plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=False, show_plot=True)
     if plot2:
         plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True)
         plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True, y_limit=0.025)
@@ -73,20 +73,19 @@ def main2():
     y_true, y_pred = prediction_collecter_plot(test_loader, model, device)
 
     #plots - save or show option
-    plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=False, show_plot=False)
+    plot_pred_vs_true(y_true, y_pred, test_mse, test_mae, save_plot=False, show_plot=True)
     plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=False)
     plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=False, y_limit=0.025, zoom='0.025')
 
 
     plot_dataset_vs_learned_marginal(model, device, test_loader, save_plot=False, show_plot=False)
-    plot_flow_posterior_one_example(model, device, test_loader, index_in_batch=1, num_samples=1000, bins=100, save_plot=False,  show_plot=True)
-    plot_uncertainty_vs_error(model, device, test_loader, num_samples=1000, save_plot=False, show_plot=True)
+    plot_uncertainty_vs_error(model, device, test_loader, num_samples=1000, save_plot=False, show_plot=False)
 
     #idx from [0, len(batch)]
-    for idx in range(0, 200, 25):
+    for idx in range(0, 100, 50):
         plot_flow_posterior_one_example(model, device, test_loader, global_index=idx, show_plot=True)
 
-    plot_error_vs_true_omega(y_true, y_pred, save_plot=False, show_plot=True)
+    plot_error_vs_true_omega(y_true, y_pred, save_plot=False, show_plot=False)
 
 
 
@@ -122,17 +121,17 @@ def main3(dataset: str="linear"):
     y_true, y_pred = prediction_collecter_plot_2w(test_loader, model, device)
 
     #plots - save or show option
-    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True)
-    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=True, y_limit=0.025, zoom='0.025')
+    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=False)
+    plot_loss_curves(train_mse_hist, val_mse_hist, save_plot=False, show_plot=False, y_limit=0.025, zoom='0.025')
 
     plot_pred_vs_true_double(y_true, y_pred, test_mse=test_mse, test_mae=test_mae, save_plot=False, show_plot=True)
-    plot_freq_space_true_vs_pred(y_true, y_pred, test_mse=test_mse, test_mae=test_mae, save_plot=False, show_plot=True)
+    plot_freq_space_true_vs_pred(y_true, y_pred, test_mse=test_mse, test_mae=test_mae, save_plot=False, show_plot=False)
 
-    for idx in range(0, 5, 2):
+    for idx in range(0, 100, 50):
         plot_flow_posterior_double_example(model, device, test_loader, global_index=idx, num_samples=100000, bins=50, save_plot=False, show_plot=True)
 
     
 #main1()
 #main2()
-#main3(dataset="linear")
+main3(dataset="linear")
 #main3(dataset="nonlinear")

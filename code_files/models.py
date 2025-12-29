@@ -253,17 +253,14 @@ class TransformerModel3(nn.Module):
         log_p_sym = torch.logsumexp(stacked, dim=1) - math.log(2.0)
 
         return log_p_sym
-
-def forward(self, src, num_samples: int = 50):
-        '''Forward pass'''
+    
+    def sample(self, src, num_samples: int=100):
         src = src.unsqueeze(-1)
         src = self.input_embedding(src)
         src = self.position_encoding(src)
         z = self.transformer_encoder(src)
         pool = z.mean(dim=1)
-        head_norm = self.pre_head_norm(pool)
-
+        head_norm = self.pre_head_norm(pool) 
+        
         samples = self.flow_head.sample(head_norm, num_samples)
-        samples_sorted, _ = torch.sort(samples, dim=-1)
-        mu = samples_sorted.mean(dim=1)
-        return mu
+        return samples
