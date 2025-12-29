@@ -133,5 +133,5 @@ def main3(dataset: str="linear"):
     
 #main1()
 #main2()
-main3(dataset="linear")
+#main3(dataset="linear")
 #main3(dataset="nonlinear")
