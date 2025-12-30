@@ -1,0 +1,6 @@
+matplotlib==3.10.8
+nflows==0.14
+numpy==2.4.0
+pandas==2.3.3
+plotly==6.5.0
+torch==2.6.0+cu124
