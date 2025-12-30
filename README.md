@@ -5,7 +5,10 @@ This repository contains code and experiments accompanying the paper:
 
 **“A Simple Parameter Inference with Transformers”**
 
-*All necessary information about run is in the introduction.ipynb*
+*Author:* Adam Kleman; *Supervisor:* Ippocratis Saltas
+
+All necessary information for running the code can be found in the notebook *introduction.ipynb*.
+
 ## Overview
 
 Starting from a single-frequency sinusoid, the project progressively increases signal complexity by:
