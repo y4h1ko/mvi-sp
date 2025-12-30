@@ -4,7 +4,21 @@ from .imports_and_libraries import *
 #positional encoding (copy of pytorch tutorial)
 #anti-permutation - for model to know order in time
 class PositionalEncoding(nn.Module):
-    '''Standard positional encoding class from PyTorch tutorial'''
+    """
+    Standard sinusoidal positional encoding module.
+
+    Adds fixed positional encodings to input sequences so that the model
+    can distinguish the temporal order of elements. This implementation
+    follows the PyTorch Transformer tutorial.
+
+    Parameters
+    ----------
+    d_model : int, optional
+        Dimensionality of the model embeddings. Defaults to `cfg.dmodel`.
+    max_len : int, optional
+        Maximum sequence length (number of time steps).
+        Defaults to `cfg.discr_of_time`.
+    """
 
     def __init__(self, d_model: int=cfg.dmodel, max_len: int=cfg.discr_of_time):
         super().__init__()
