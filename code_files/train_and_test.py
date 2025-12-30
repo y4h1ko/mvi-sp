@@ -1,15 +1,14 @@
 from .imports_and_libraries import *
 
 #general utility functions
-def set_device():
-    '''Set device to cuda if available else cpu'''
+def set_device() -> torch.device:
+    """Select computation device (cuda if available, otherwise CPU)."""
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    #print(device.type) 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
     return device
 
-def split_and_load(dataset):
-    '''Splits dataset into train, validation and test parts'''
+def split_and_load(dataset) -> tuple[DataLoader, DataLoader, DataLoader]:
+    '''Splits dataset into train, validation and test parts (60%, 20%, 20%) and returns corresponding dataloaders'''
 
     #spltting to train, val and test parts
     ds_train, ds_val, ds_test = random_split(
@@ -26,8 +25,26 @@ def split_and_load(dataset):
 
 #functions for model without flow head
 @torch.no_grad()
-def evaluate(loader, model, device):
-    '''Evaluation step returning MSE and MAE'''
+def evaluate(loader, model, device) -> tuple[float, float]:
+    """
+    Evaluate a deterministic model using MSE and MAE.
+
+    Parameters
+    ----------
+    loader : DataLoader
+        DataLoader providing evaluation samples.
+    model : torch.nn.Module
+        Trained model returning point predictions.
+    device : torch.device
+        Device on which evaluation is performed.
+
+    Returns
+    -------
+    mse : float
+        Mean squared error over the dataset.
+    mae : float
+        Mean absolute error over the dataset.
+    """
 
     model.eval()
     mse, mae, n = 0, 0, 0
@@ -42,8 +59,28 @@ def evaluate(loader, model, device):
     return mse / n, mae / n
 
 @torch.no_grad()
-def prediction_collecter_plot(loader, model, device):
-    '''Collect predictions and true values from loader just for plotting true omegas vs predicted omegas'''
+def prediction_collecter_plot(loader, model, device) -> tuple[torch.Tensor, torch.Tensor]:
+    """
+    Collect true and predicted target values for visualization.
+
+    Used for plotting predicted frequencies against real-ones.
+
+    Parameters
+    ----------
+    loader : DataLoader
+        DataLoader providing evaluation samples.
+    model : torch.nn.Module
+        Trained model returning point predictions.
+    device : torch.device
+        Device on which inference is performed.
+
+    Returns
+    -------
+    y_true : torch.Tensor
+        Ground-truth target values.
+    y_pred : torch.Tensor
+        Corresponding model predictions.
+    """
 
     model.eval()
     y_true, y_pred = [], []
@@ -61,8 +98,43 @@ def prediction_collecter_plot(loader, model, device):
     return y_true, y_pred
 
 def train_and_eval_training(train_loader, val_loader, device, model, criterion, optimizer, scheduler, 
-                            max_epochs: int=cfg.epochs, print_update: bool=False):
-    '''Train the model and evaluate on validation. Saves best model based on validation MSE through training'''
+                            max_epochs: int=cfg.epochs, print_update: bool=False) -> tuple[nn.Module, list[float], list[float]]:
+    """
+    Train a deterministic model and select the best epoch based on validation MSE.
+
+    The model is trained for a fixed number of epochs and the parameters
+    corresponding to the lowest validation MSE are restored at the end.
+
+    Parameters
+    ----------
+    train_loader : DataLoader
+        Training data loader.
+    val_loader : DataLoader
+        Validation data loader.
+    device : torch.device
+        Device used for training.
+    model : torch.nn.Module
+        Model to be trained.
+    criterion : callable
+        Loss function (e.g. MSE).
+    optimizer : torch.optim.Optimizer
+        Optimizer used for training.
+    scheduler : torch.optim.lr_scheduler
+        Learning rate scheduler.
+    max_epochs : int, optional
+        Number of training epochs. Defaults to `cfg.epochs`.
+    print_update : bool, optional
+        If True, print progress every 10 epochs.
+
+    Returns
+    -------
+    model : torch.nn.Module
+        Trained model with best validation weights.
+    train_mse_hist : list[float]
+        Training MSE history.
+    val_mse_hist : list[float]
+        Validation MSE history.
+    """
 
     #real loop and training and everything....
     best_val = float("inf")
@@ -109,9 +181,21 @@ def train_and_eval_training(train_loader, val_loader, device, model, criterion, 
 
 #everything for flow head with one frequency
 def train_and_eval_training_flow(train_loader, val_loader, device, model, optimizer, scheduler, 
-                            max_epochs: int=cfg.epochs, print_update: bool=False):
-    '''Train the model and evaluate on validation. Saves best model based on validation MSE through training but with NLL loss function'''
+                            max_epochs: int=cfg.epochs, print_update: bool=False) -> tuple[nn.Module, list[float], list[float]]:
+    """
+    Train a model with a normalizing flow output head using NLL loss.
 
+    The best model is selected based on validation MSE.
+
+    Returns
+    -------
+    model : torch.nn.Module
+        Trained model with best validation weights.
+    train_mse_hist : list[float]
+        Training MSE history.
+    val_mse_hist : list[float]
+        Validation MSE history.
+    """
     #real loop and training and everything....
     best_val = float("inf")
     best_state = None
@@ -159,8 +243,18 @@ def train_and_eval_training_flow(train_loader, val_loader, device, model, optimi
 
 #everything for 2 omegas with flow head down there
 @torch.no_grad()
-def evaluate2w(loader, model, device):
-    """Evaluation for 2D frequency targets that are unordered sets {w1, w2}."""
+def evaluate2w(loader, model, device) -> tuple[float, float]:
+    """
+    Evaluate models predicting unordered pairs of frequencies {w1, w2}.
+    The error is computed using the permutation that minimizes the loss.
+
+    Returns
+    -------
+    mse : float
+        Permutation-invariant mean squared error.
+    mae : float
+        Permutation-invariant mean absolute error.
+    """
 
     model.eval()
     mse_sum, mae_sum, n = 0.0, 0.0, 0
@@ -191,8 +285,30 @@ def evaluate2w(loader, model, device):
     return mse, mae
 
 @torch.no_grad()
-def prediction_collecter_plot_2w(loader, model, device):
-    '''Collect y_true, y_pred for 2D unordered targets {w1, w2}, aligned per sample using the better of the two permutations.'''
+def prediction_collecter_plot_2w(loader, model, device) -> tuple[torch.Tensor, torch.Tensor]:
+    """
+    Collect aligned ground-truth and predicted values for unordered 2D targets {w1, w2}.
+
+    For each sample, the function chooses the permutation (w1, w2) vs (w2, w1)
+    that minimizes the squared error between prediction and target, and returns
+    the aligned tensors. This is useful for plotting predictions against truth.
+
+    Parameters
+    ----------
+    loader : DataLoader
+        DataLoader providing batches (xb, yb) where yb has shape (batch_size, 2).
+    model : torch.nn.Module
+        Trained model returning predictions of shape (batch_size, 2).
+    device : torch.device
+        Device on which inference is performed.
+
+    Returns
+    -------
+    y_true : torch.Tensor
+        Aligned ground-truth targets of shape (N, 2) on CPU.
+    y_pred : torch.Tensor
+        Aligned predictions of shape (N, 2) on CPU.
+    """
     model.eval()
     y_true_list, y_pred_list = [], []
 
@@ -218,14 +334,64 @@ def prediction_collecter_plot_2w(loader, model, device):
     y_pred = torch.cat(y_pred_list, dim=0)
     return y_true, y_pred
 
-def perm_invariant_mse(pred, target):
+def perm_invariant_mse(pred, target) -> torch.Tensor:
+    '''Compute permutation-invariant MSE for unordered pairs {w1, w2}.
+    
+    Parameters
+    ----------
+    pred : torch.Tensor
+        Predictions of shape (batch_size, 2).
+    target : torch.Tensor
+        Targets of shape (batch_size, 2), treated as an unordered set per row.
+
+    Returns
+    -------
+    torch.Tensor
+        Scalar tensor: mean permutation-invariant squared error over the batch.
+    '''
+
     se1 = (pred - target).pow(2).sum(dim=1)
     se2 = (pred - target.flip(dims=[1])).pow(2).sum(dim=1)
     se_min = torch.minimum(se1, se2)
     return se_min.mean()
 
-def train_and_eval_training_flow2(train_loader, val_loader, device, model, optimizer, scheduler, max_epochs: int=cfg.epochs, print_update: bool=False):
-    '''Train the model and evaluate on validation. Saves best model based on validation MSE through training but with NLL loss function'''
+def train_and_eval_training_flow2(train_loader, val_loader, device, model, optimizer, scheduler, max_epochs: int=cfg.epochs, 
+                    print_update: bool=False) -> tuple[nn.Module, list[float], list[float]]:
+    """
+    Train a model for unordered 2D frequency targets {w1, w2} using a flow-based NLL objective.
+
+    The model is trained using negative log-likelihood (NLL) computed by `model.log_prob`.
+    Validation is evaluated with a permutation-invariant metric (best matching of {w1, w2}).
+    The best model parameters are selected based on lowest validation MSE and restored at the end.
+
+    Parameters
+    ----------
+    train_loader : DataLoader
+        Training data loader returning (xb, yb) with yb shape (batch_size, 2).
+    val_loader : DataLoader
+        Validation data loader returning (xb, yb) with yb shape (batch_size, 2).
+    device : torch.device
+        Device used for training and evaluation.
+    model : torch.nn.Module
+        Flow-based model providing `log_prob(x, y)` for NLL training.
+    optimizer : torch.optim.Optimizer
+        Optimizer used to update model parameters.
+    scheduler : torch.optim.lr_scheduler
+        Learning rate scheduler stepped once per epoch.
+    max_epochs : int, optional
+        Number of training epochs. Defaults to `cfg.epochs`.
+    print_update : bool, optional
+        If True, prints progress every 10 epochs.
+
+    Returns
+    -------
+    model : torch.nn.Module
+        Trained model with best validation weights loaded.
+    train_mse_hist : list[float]
+        Training MSE history (per epoch, permutation-invariant).
+    val_mse_hist : list[float]
+        Validation MSE history (per epoch, permutation-invariant).
+    """
 
     #real loop and training and everything....
     best_val = float("inf")
