@@ -71,10 +71,7 @@ Permutation ambiguity for two-frequency inference is handled during training and
 
 ## Note on code style
 
-The scripts in this repo were written for experimentation and reporting.
-They are not professionally organized as reusable Python modules and may require manual edits
-(paths, configs, plotting calls) depending on your setup.
-Everything was runned with cude device
+Everything was runned with torch cuda device. Used Python 3.12.
 
 ## Repository structure
 
@@ -84,7 +81,6 @@ Everything was runned with cude device
 ├── train_and_test.py        # Training and evaluation loops
 ├── visualizations.py        # Plotting utilities
 ├── configuration.py         # Experiment configuration and settings
-├── analysis.py              # Post-processing and metrics (messy file)
 ├── main.py                  # Prepared final models
 ├── notebooks/               # Exploratory notebooks
 ├── plots/                   # Figures and tables
