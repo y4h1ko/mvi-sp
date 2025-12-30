@@ -1,9 +1,9 @@
-from .imports_and_libraries import *
-from .dataset_creation import *
-from .positional_encodings import *
-from .models import *
-from .train_and_test import *
-from .visualizations import *
+from ..code_files.imports_and_libraries import *
+from ..code_files.dataset_creation import *
+from ..code_files.positional_encodings import *
+from ..code_files.models import *
+from ..code_files.train_and_test import *
+from ..code_files.visualizations import *
 
 #diff_epoch = [80, 90, 100, 120, 140, 160, 180, 200]
 
